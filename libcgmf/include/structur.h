@@ -20,6 +20,7 @@
 
 #include <vector>
 
+#include "optical.h"
 #include "dimensions.h"
 #include "gdr.h"
 /*************************************************/
@@ -100,18 +101,20 @@ class Parity{
 /****************************/
 class Pdata{
  public:
-    Particle  particleID     ;     /* particle identifier              */
-    ZAnumber  particle       ;     /* particle mass and atomic number  */
+    Particle     particleID  ;     /* particle identifier              */
+    ZAnumber     particle    ;     /* particle mass and atomic number  */
     unsigned int omp         ;     /* optical potential index          */
-    double    spin           ;     /* spin                             */
-    double    mass           ;     /* exact particle mass              */
-    double    mass_excess    ;     /* particle mass excess             */
+    double       spin        ;     /* spin                             */
+    double       mass        ;     /* exact particle mass              */
+    double       mass_excess ;     /* particle mass excess             */
+    GKDNeutron*  gkd         ;
 
     Pdata(){
       omp         = 0;
       spin        = 0.0;
       mass        = 0.0;
       mass_excess = 0.0;
+      gkd         = nullptr;
     }
 };
 
