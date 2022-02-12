@@ -23,7 +23,7 @@ set(CMAKE_CXX_STANDARD 14)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
 
-CMAKE_DEPENDENT_OPTION(cgmf.installation 
+CMAKE_DEPENDENT_OPTION(cgmf.installation
                        "Install CGMF (default is ON)" ON
                        "NOT SUBPROJECT" ${INSTALL_SUBPROJECTS}
 )
@@ -32,6 +32,7 @@ mark_as_advanced(cgmf.installation)
 add_subdirectory(libcgmf)
 
 option(cgmf.tests "Configure tests for CGMF" ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(cgmf.tests)
   enable_testing()
