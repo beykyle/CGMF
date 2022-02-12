@@ -29,7 +29,6 @@ void cgmf_cleanup(void);
 void set_rng(std::function<double(void)>);
 void set_rng(double (*) (void));
 
-
 /* cgmEvent class: base class for cgmfEvent */
 
 class cgmEvent {
@@ -130,7 +129,7 @@ protected:
 
 	void outputOptions (unsigned int);
 	void allocateMemory ();
-    int cgmCheckRange(int, int, double);
+  int cgmCheckRange(int, int, double);
 
 private:
 	
@@ -232,6 +231,8 @@ protected:
 	double* preFissionNeutronDircosv;
 	double* preFissionNeutronDircosw;
 	double* preFissionNeutronAges;
+
+  
 
 	void allocateMemory();
 

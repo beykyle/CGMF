@@ -14,6 +14,7 @@
 #define __CGM_H__
 
 #include "structur.h"
+#include "optical.h"
 
 //#ifndef CGM_TOPLEVEL
 //extern  Calculation  ctl;

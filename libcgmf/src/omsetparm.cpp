@@ -62,7 +62,8 @@ void omSetCoulomb(int zz, double mu, double e, double *yeta, double *sig0)
 /*     Setup Optical Potential Parameters                 */
 /**********************************************************/
 unsigned int omSetOmp(unsigned int potfm, double e,
-                      int z0, int a0, int z1, int a1, Optical *omp)
+                      int z0, int a0, int z1, int a1, 
+                      Optical *omp)
 {
   omInitOmp(omp);
 

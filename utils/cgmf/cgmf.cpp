@@ -16,6 +16,7 @@
 #include <cstdlib>
 
 #include "cgmfEvents.h"
+#include "cgm.h"
 #include "rngcgm.h"
 
 #include "config.h"
@@ -31,6 +32,7 @@ void readUserInput      (int, char *[], int);
 void recordEvent        (cgmfEvent *);
 void printEventToFile   (FILE *fp, cgmfEvent *, double);
 void printSummaryEvents (cgmfEvent *);
+GKDNeutron* readGKDParamsFromFile(string fname);
 
 // Default user input values
 string path = "";
