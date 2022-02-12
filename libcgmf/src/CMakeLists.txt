@@ -36,4 +36,5 @@ target_sources(cgmf PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/specmain.cpp
   ${CMAKE_CURRENT_LIST_DIR}/specmc.cpp
   ${CMAKE_CURRENT_LIST_DIR}/stattrans.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/terminate.cpp)
+  ${CMAKE_CURRENT_LIST_DIR}/terminate.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/gkdNeutron.cpp)
