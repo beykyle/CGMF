@@ -69,6 +69,12 @@ void set_time_coincidence_window(double timew){
 
 double gammaTimeStamp [ MAX_NUMBER_GAMMAS ];
 
+void setPdataGKD (string fname) {
+  //pdt[neutron].gkd = new GKDNeutron(fname);
+  pdt[neutron].gkd = new GKDNeutron();
+}
+
+
 /*!
  *
  *  \brief allocate tin, pin
