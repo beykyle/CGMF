@@ -1,7 +1,7 @@
 CGMF, Cascading Gamma-ray Multiplicity and Fission
 ==================================================
 
-Updated on Sept. 24, 2021
+This is a modified version of CGMF that is being used for uncertainty quantification.
 
 ---
 Authors
