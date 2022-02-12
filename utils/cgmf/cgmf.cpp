@@ -41,6 +41,7 @@ int ZAIDt=0;
 int nevents=0;
 int startingEvent=1;
 string outfilename="";
+string gkd_fname="";
 double timeCoincidenceWindow=1e-8;
 
 int    sumALF=0, sumAHF=0, sumZLF=0, sumZHF=0;
@@ -89,6 +90,10 @@ int main(int argc, char *argv[]) {
   } else {
     FILE *fp = fopen(&outfilename[0],"w");
     if(ip==0) fprintf(fp, "# %5i %g %g\n", ZAIDt, incidentEnergy,timeCoincidenceWindow);
+    if (!gkd_fname.empty()) {
+      printf("Reading Koning-Delaroche Global OM parameters from %s",  gkd_fname.c_str());
+      setPdataGKD(gkd_fname);
+    }
     for (int i=0; i<nevents; i++) {
       rng.set_seed(i+ip*nevents+startingEvent);
       set_rng(rng);
@@ -378,7 +383,7 @@ void readUserInput (int argc, char *argv[], int ip) {
   int p;
 
   // read user input from command line
-  while ((p=getopt(argc,argv,"e:n:i:f:t:d:s:"))!=-1) {
+  while ((p=getopt(argc,argv,"e:n:i:f:t:d:s:o:"))!=-1) {
     switch(p){
       case 'e':
         incidentEnergy=atof(optarg);
@@ -401,6 +406,8 @@ void readUserInput (int argc, char *argv[], int ip) {
       case 's':
         startingEvent=atoi(optarg);
         break;
+      case 'o':
+        gkd_fname = optarg;
       default:
         break;
     }
