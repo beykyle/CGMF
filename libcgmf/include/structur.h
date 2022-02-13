@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "optical.h"
+#include "gkdNeutron.hpp"
 #include "dimensions.h"
 #include "gdr.h"
 /*************************************************/

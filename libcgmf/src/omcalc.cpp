@@ -16,6 +16,7 @@
 
 using namespace std;
 
+#include "structur.h"
 #include "optical.h"
 #include "cgm.h"
 
@@ -75,8 +76,7 @@ int omCalc
 //---------------------------------------
 //      Setup Optical Potential Geometry
 
-  unsigned int ompindex =  omSetOmp(proj->omp,cdt.energy,targ->getZ(),targ->getA(),
-                                    proj->particle.getZ(),proj->particle.getA(),&omp) & 0x00ff;
+  unsigned int ompindex =  omSetOmp(cdt.energy, targ, proj, &omp) & 0x00ff;
   pot.width = INTEG_WIDTH;
   omPotentialForm(ompindex, zzprod, &omp, &cdt, &pot);
 

@@ -4,7 +4,7 @@
 using namespace std;
 
 #include "physics.h"
-#include "optical.h"
+#include "gkdNeutron.hpp"
 #include "terminate.h"
 
 
@@ -97,6 +97,3 @@ double GKDNeutron::compl_so_depth(int zt, int at, double e) const {
 GKDNeutron::GKDNeutron(string fname) {
   //TODO
 }
-
-void GKDNeutron::construct(Optical* omp, int zt, int at, double e) const {
-};

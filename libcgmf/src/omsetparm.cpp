@@ -17,6 +17,7 @@ using namespace std;
 
 #include "physics.h"
 #include "optical.h"
+#include "structur.h"
 
 static void     omSetCoulomb     (int, double, double, double *, double *);
 
@@ -61,10 +62,13 @@ void omSetCoulomb(int zz, double mu, double e, double *yeta, double *sig0)
 /**********************************************************/
 /*     Setup Optical Potential Parameters                 */
 /**********************************************************/
-unsigned int omSetOmp(unsigned int potfm, double e,
-                      int z0, int a0, int z1, int a1, 
-                      Optical *omp)
+unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
 {
+  auto potfm  = proj->omp;
+  const auto z0 = target->getZ();
+  const auto a0 = target->getA();
+  const auto z1 = proj->particle.getZ();
+  const auto a1 = proj->particle.getA();
   omInitOmp(omp);
 
   double a3 = pow((double)a0,1.0/3.0);
