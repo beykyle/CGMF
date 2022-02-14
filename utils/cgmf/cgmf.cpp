@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
     FILE *fp = fopen(&outfilename[0],"w");
     if(ip==0) fprintf(fp, "# %5i %g %g\n", ZAIDt, incidentEnergy,timeCoincidenceWindow);
     if (!gkd_fname.empty()) {
-      printf("Reading Koning-Delaroche Global OM parameters from %s",  gkd_fname.c_str());
+      printf("Reading Koning-Delaroche Global OM parameters from %s\n",  gkd_fname.c_str());
       setPdataGKD(gkd_fname);
     }
     for (int i=0; i<nevents; i++) {
