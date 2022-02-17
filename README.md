@@ -1,7 +1,7 @@
 CGMF, Cascading Gamma-ray Multiplicity and Fission
 ==================================================
 
-This is a modified version of CGMF that is being used for uncertainty quantification.
+This is a modified version of CGMF for use in uncertainty quantification. The `-o` command line argument supplies a path to a json file containing custom optical model parameters.
 
 ---
 Authors
@@ -101,6 +101,8 @@ Options:
 	-f $filename		[optional]	fission histories or yields result file (default: "histories.cgmf" or "yields.cgmf")
 	-t $timeCoinc		[optional]	time coincidence window for long-lived isomer gamma-ray emission cutoff (in sec)
 	-d $datapath		[optional]	overrides the environment variable CGMFDATA and default datapath
+	-o $omppath		[optional]	use custom Koning-Delaroche global OM params, formatted in json at given path
+
 
 ---
 Results
