@@ -87,7 +87,14 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
     omp->spin_orbit.real = gkd->real_so_depth(z0,a0,e);
     omp->spin_orbit.imag = gkd->compl_so_depth(z0,a0,e);
     
-    //  Reduced parameters 
+    // diffusivities
+    omp->a0   = gkd->real_diffusivity(z0,a0,e);
+    omp->av   = omp->a0;
+    omp->avso = gkd->real_so_depth(z0,a0,e);
+    omp->awso = omp->avso;
+    omp->as   = gkd->compl_surf_diffusivity(z0,a0,e);
+    
+    //  Reduced potential radii
     omp->R0   = gkd->real_central_depth(z0,a0,e)*a3;
     omp->R0s  = 0;
     omp->Rv   = gkd->compl_central_depth(z0,a0,e)*a3;
@@ -95,12 +102,6 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
     omp->Rvso = gkd->real_so_depth(z0,a0,e)*a3;
     omp->Rwso = gkd->compl_so_depth(z0,a0,e)*a3;
     omp->Rc   = 0;
-    
-    omp->a0   = gkd->real_diffusivity(z0,a0,e);
-    omp->av   = omp->a0;
-    omp->avso = gkd->real_so_depth(z0,a0,e);
-    omp->awso = omp->avso;
-    omp->as   = gkd->compl_surf_diffusivity(z0,a0,e);
   
   } else  {
     //  Retrieve potential parameters from library 
@@ -164,6 +165,7 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
   omp2->Rvso = omp2->rvso*a3;
   omp2->Rwso = omp2->rwso*a3;
   omp2->Rc   = omp2->rc  *a3;
+  // TODO delete above this
 
   return( (potfm0 & 0xff00) | potfm );
 }
