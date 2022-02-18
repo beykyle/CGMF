@@ -71,7 +71,8 @@ double gammaTimeStamp [ MAX_NUMBER_GAMMAS ];
 
 void setPdataGKD (string fname) {
   //pdt[neutron].gkd = new GKDNeutron(fname);
-  pdt[neutron].gkd = new GKDNeutron();
+  pdt[neutron].gkd  = new GKDNeutron();
+  pdt[gammaray].gkd = nullptr;
 }
 
 
