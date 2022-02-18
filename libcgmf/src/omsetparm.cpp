@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
 using namespace std;
 
@@ -75,16 +76,18 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
   double a3 = pow((double)a0,1.0/3.0);
   
   if(auto gkd = proj->gkd) {
+    //assert(potfm>>8 == 6);
+    potfm = 6<<8;
     potfm = omp_library(potfm>>8, z0, a0, z1, a1, e, omp);
-    /***  Energy dependent depths */
+    //  Energy dependent depths 
     omp->volume.real     = gkd->real_central_depth(z0,a0,e);
-    omp->surface.real    = 0;
     omp->volume.imag     = gkd->compl_central_depth(z0,a0,e);
+    omp->surface.real    = 0;
     omp->surface.imag    = gkd->compl_surf_depth(z0,a0,e);
     omp->spin_orbit.real = gkd->real_so_depth(z0,a0,e);
     omp->spin_orbit.imag = gkd->compl_so_depth(z0,a0,e);
     
-    /***  Reduced parameters */
+    //  Reduced parameters 
     omp->R0   = gkd->real_central_depth(z0,a0,e)*a3;
     omp->R0s  = 0;
     omp->Rv   = gkd->compl_central_depth(z0,a0,e)*a3;
@@ -98,30 +101,27 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
     omp->avso = gkd->real_so_depth(z0,a0,e);
     omp->awso = omp->avso;
     omp->as   = gkd->compl_surf_diffusivity(z0,a0,e);
-
-    potfm = 0x0013;
   
   } else  {
-    /***  Retrieve potential parameters from library */
+    //  Retrieve potential parameters from library 
     potfm = omp_library(potfm>>8, z0, a0, z1, a1, e, omp);
 
-    /***  Energy dependent depths */
+    //  Energy dependent depths 
     omp->volume.real     = omp->v1  + omp->v2  *e + omp->v3  *e*e;
     omp->surface.real    = omp->vs1 + omp->vs2 *e + omp->vs3 *e*e;
     omp->volume.imag     = omp->wv1 + omp->wv2 *e + omp->wv3 *e*e;
     omp->surface.imag    = omp->ws1 + omp->ws2 *e + omp->ws3 *e*e;
     omp->spin_orbit.real = omp->vso1+ omp->vso2*e + omp->vso3*e*e;
     omp->spin_orbit.imag = omp->wso1+ omp->wso2*e + omp->wso3*e*e;   
+    
+    omp->R0   = omp->r0  *a3;
+    omp->R0s  = omp->r0s *a3;
+    omp->Rv   = omp->rv  *a3;
+    omp->Rs   = omp->rs  *a3;
+    omp->Rvso = omp->rvso*a3;
+    omp->Rwso = omp->rwso*a3;
+    omp->Rc   = omp->rc  *a3;
   }
-  
-  /***  Reduced parameters */
-  omp->R0   = omp->r0  *a3;
-  omp->R0s  = omp->r0s *a3;
-  omp->Rv   = omp->rv  *a3;
-  omp->Rs   = omp->rs  *a3;
-  omp->Rvso = omp->rvso*a3;
-  omp->Rwso = omp->rwso*a3;
-  omp->Rc   = omp->rc  *a3;
 
 
   if(omp->volume.real   <= 0.0) {
@@ -139,6 +139,31 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
   if(omp->spin_orbit.real<= 0.0) {   
     omp->spin_orbit.real=0.0;
   }
+
+  // TODO delte this
+  // calculate OMP2 in original way for sake of comparison
+  auto omp2  = new Optical();
+
+  /***  Retrieve potential parameters from library */
+  unsigned int potfm1 = proj->omp;
+  auto potfm2 = omp_library(potfm1>>8, z0, a0, z1, a1, e, omp2);
+
+  /***  Energy dependent depths */
+  omp2->volume.real     = omp2->v1  + omp2->v2  *e + omp2->v3  *e*e;
+  omp2->surface.real    = omp2->vs1 + omp2->vs2 *e + omp2->vs3 *e*e;
+  omp2->volume.imag     = omp2->wv1 + omp2->wv2 *e + omp2->wv3 *e*e;
+  omp2->surface.imag    = omp2->ws1 + omp2->ws2 *e + omp2->ws3 *e*e;
+  omp2->spin_orbit.real = omp2->vso1+ omp2->vso2*e + omp2->vso3*e*e;
+  omp2->spin_orbit.imag = omp2->wso1+ omp2->wso2*e + omp2->wso3*e*e;
+
+  /***  Reduced parameters */
+  omp2->R0   = omp2->r0  *a3;
+  omp2->R0s  = omp2->r0s *a3;
+  omp2->Rv   = omp2->rv  *a3;
+  omp2->Rs   = omp2->rs  *a3;
+  omp2->Rvso = omp2->rvso*a3;
+  omp2->Rwso = omp2->rwso*a3;
+  omp2->Rc   = omp2->rc  *a3;
 
   return( (potfm0 & 0xff00) | potfm );
 }
