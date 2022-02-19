@@ -90,17 +90,17 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
     // diffusivities
     omp->a0   = gkd->real_diffusivity(z0,a0,e);
     omp->av   = omp->a0;
-    omp->avso = gkd->real_so_depth(z0,a0,e);
+    omp->avso = gkd->so_diffusivity(z0,a0,e);
     omp->awso = omp->avso;
     omp->as   = gkd->compl_surf_diffusivity(z0,a0,e);
     
     //  Reduced potential radii
-    omp->R0   = gkd->real_central_depth(z0,a0,e)*a3;
+    omp->R0   = gkd->real_radius(z0,a0,e)*a3;
     omp->R0s  = 0;
-    omp->Rv   = gkd->compl_central_depth(z0,a0,e)*a3;
-    omp->Rs   = gkd->compl_surf_depth(z0,a0,e)*a3;
-    omp->Rvso = gkd->real_so_depth(z0,a0,e)*a3;
-    omp->Rwso = gkd->compl_so_depth(z0,a0,e)*a3;
+    omp->Rv   = gkd->real_radius(z0,a0,e)*a3;
+    omp->Rs   = gkd->compl_surf_radius(z0,a0,e)*a3;
+    omp->Rvso = gkd->so_radius(z0,a0,e)*a3;
+    omp->Rwso = gkd->so_radius(z0,a0,e)*a3;
     omp->Rc   = 0;
   
   } else  {
