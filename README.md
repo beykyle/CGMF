@@ -1,7 +1,7 @@
 CGMF, Cascading Gamma-ray Multiplicity and Fission
 ==================================================
 
-This is a modified version of CGMF for use in uncertainty quantification. The `-o` command line argument supplies a path to a json file containing custom optical model parameters.
+This is a modified version of CGMF for use in uncertainty quantification. The `-o` command line argument supplies a path to a json file containing custom optical model parameters. Includes [nlohmann/json](https://github.com/nlohmann/json) as a git submodule to handle json parsing. 
 
 ---
 Authors
