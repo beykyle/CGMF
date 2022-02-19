@@ -31,6 +31,11 @@ using namespace std;
 #include "FissionFragments.h"
 #include "rngcgm.h"
 
+#ifdef __cplusplus
+#include "json.hpp"
+using nlohmann::json;
+#endif
+
 void recordEmittedParticles (void);
 void recordEmittedParticlesFission (fissionEventType *);
 
@@ -70,8 +75,10 @@ void set_time_coincidence_window(double timew){
 double gammaTimeStamp [ MAX_NUMBER_GAMMAS ];
 
 void setPdataGKD (string fname) {
-  //pdt[neutron].gkd = new GKDNeutron(fname);
-  pdt[neutron].gkd  = new GKDNeutron();
+  std::ifstream i(fname);
+  json j;
+  i >> j;
+  pdt[neutron].gkd = new GKDNeutron(j);
   pdt[gammaray].gkd = nullptr;
 }
 

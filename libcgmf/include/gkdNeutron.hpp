@@ -4,7 +4,10 @@
 #ifdef __cplusplus
 #include <string>
 using std::string;
+#include "json.hpp"
+using nlohmann::json;
 #endif
+
 
 struct GKDNeutron {
   const double e_fermi_0;
@@ -48,7 +51,7 @@ struct GKDNeutron {
   double compl_so_depth(int zt, int at, double En) const; 
 
   // read params from json file
- // GKDNeutron(string fname);
+  GKDNeutron(json param_file);
 
   // set default KD global params
   GKDNeutron(): 

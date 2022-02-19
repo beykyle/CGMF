@@ -141,32 +141,6 @@ unsigned int omSetOmp(double e, ZAnumber* target, Pdata* proj, Optical *omp)
     omp->spin_orbit.real=0.0;
   }
 
-  // TODO delte this
-  // calculate OMP2 in original way for sake of comparison
-  auto omp2  = new Optical();
-
-  /***  Retrieve potential parameters from library */
-  unsigned int potfm1 = proj->omp;
-  auto potfm2 = omp_library(potfm1>>8, z0, a0, z1, a1, e, omp2);
-
-  /***  Energy dependent depths */
-  omp2->volume.real     = omp2->v1  + omp2->v2  *e + omp2->v3  *e*e;
-  omp2->surface.real    = omp2->vs1 + omp2->vs2 *e + omp2->vs3 *e*e;
-  omp2->volume.imag     = omp2->wv1 + omp2->wv2 *e + omp2->wv3 *e*e;
-  omp2->surface.imag    = omp2->ws1 + omp2->ws2 *e + omp2->ws3 *e*e;
-  omp2->spin_orbit.real = omp2->vso1+ omp2->vso2*e + omp2->vso3*e*e;
-  omp2->spin_orbit.imag = omp2->wso1+ omp2->wso2*e + omp2->wso3*e*e;
-
-  /***  Reduced parameters */
-  omp2->R0   = omp2->r0  *a3;
-  omp2->R0s  = omp2->r0s *a3;
-  omp2->Rv   = omp2->rv  *a3;
-  omp2->Rs   = omp2->rs  *a3;
-  omp2->Rvso = omp2->rvso*a3;
-  omp2->Rwso = omp2->rwso*a3;
-  omp2->Rc   = omp2->rc  *a3;
-  // TODO delete above this
-
   return( (potfm0 & 0xff00) | potfm );
 }
 
