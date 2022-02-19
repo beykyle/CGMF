@@ -8,18 +8,19 @@ using namespace std;
 #include "terminate.h"
 
 double GKDNeutron::Ef(int at) const {
-  return  e_fermi_0 + e_fermi_A * (double)at;
+  const double A = (double)at;
+  return  e_fermi_0 + e_fermi_A * A;
 }
 
 double GKDNeutron::asym(int zt, int at) const {
   const double A = (double)at;
   const double Z = (double)zt;
-  return 1 - 2*A/Z;
+  return 1 - 2*Z/A;
 }
 
 double GKDNeutron::real_radius(int zt, int at, double En) const {
   const double A = (double)at;
-  return r_0 - r_A * pow(A,-1./3.);
+  return r_0 - r_A / pow(A,1./3.);
 }
 
 double GKDNeutron::so_radius(int zt, int at, double En) const {
