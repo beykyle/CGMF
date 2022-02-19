@@ -2,3 +2,6 @@
 __pycache__
 *.out
 *.ipynb_checkpoints*
+build/*
+.cache/
+compile_commands.json
