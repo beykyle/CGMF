@@ -118,7 +118,7 @@ void    specMCalloc(void);
 void    specMCcleanup(void);
 void    specMCMain                      (double, int, double, double, unsigned long, double **);
 void    specMCMainFission               (fissionEventType *);
-void    setPdataGKD                     (string fname);
+void    setPdataOMP                     (string fname);
 
 
 /**************************************/
