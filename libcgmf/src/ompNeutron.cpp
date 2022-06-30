@@ -4,7 +4,7 @@
 using namespace std;
 
 #include "physics.h"
-#include "gkdNeutron.hpp"
+#include "ompNeutron.hpp"
 #include "terminate.h"
 
 double GKDNeutron::Ef(int at) const {
@@ -18,32 +18,48 @@ double GKDNeutron::asym(int zt, int at) const {
   return 1 - 2*Z/A;
 }
 
-double GKDNeutron::real_radius(int zt, int at, double En) const {
+double GKDNeutron::real_central_radius(int zt, int at, double En) const {
   const double A = (double)at;
   return r_0 - r_A / pow(A,1./3.);
 }
 
-double GKDNeutron::so_radius(int zt, int at, double En) const {
+double GKDNeutron::cmpl_central_radius(int zt, int at, double En) const {
+  return real_central_radius(zt, at, En);
+}
+
+double GKDNeutron::real_so_radius(int zt, int at, double En) const {
   const double A = (double)at;
   return rso_0 - rso_A * pow(A,-1./3.);
 }
 
-double GKDNeutron::compl_surf_radius(int zt, int at, double En) const {
+double GKDNeutron::cmpl_so_radius(int zt, int at, double En) const {
+  return real_so_radius(zt, at, En);
+}
+
+double GKDNeutron::cmpl_surf_radius(int zt, int at, double En) const {
   const double A = (double)at;
   return rd_0 - rd_A * pow(A,1./3.);
 }
 
 
-double GKDNeutron::real_diffusivity(int zt, int at, double En) const {
+double GKDNeutron::real_central_diffusivity(int zt, int at, double En) const {
   const double A = (double)at;
   return a_0 - a_A * A;
 }
 
-double GKDNeutron::so_diffusivity(int zt, int at, double En) const {
+double GKDNeutron::cmpl_central_diffusivity(int zt, int at, double En) const {
+  return real_central_diffusivity(zt, at, En);
+}
+
+double GKDNeutron::real_so_diffusivity(int zt, int at, double En) const {
   return aso_0;
 }
 
-double GKDNeutron::compl_surf_diffusivity(int zt, int at, double En) const {
+double GKDNeutron::cmpl_so_diffusivity(int zt, int at, double En) const {
+  return real_so_diffusivity(zt, at, En);
+}
+
+double GKDNeutron::cmpl_surf_diffusivity(int zt, int at, double En) const {
   const double A = (double)at;
   return ad_0 - ad_A * A;
 }
@@ -61,7 +77,7 @@ double GKDNeutron::real_central_depth(int zt, int at, double En) const {
   return v1 * (1 -  v2 * Ex + v3 * Ex*Ex - v4 * Ex*Ex*Ex);
 }
 
-double GKDNeutron::compl_central_depth(int zt, int at, double En) const {
+double GKDNeutron::cmpl_central_depth(int zt, int at, double En) const {
   const double Ex = En - Ef(at);
   const double A = (double)at;
 
@@ -71,7 +87,7 @@ double GKDNeutron::compl_central_depth(int zt, int at, double En) const {
   return w1 * Ex * Ex/(Ex*Ex + w2*w2);
 }
 
-double GKDNeutron::compl_surf_depth(int zt, int at, double En) const {
+double GKDNeutron::cmpl_surf_depth(int zt, int at, double En) const {
   const double Ex = En - Ef(at);
   const double A = (double)at;
   const double alpha = asym(zt,at);
@@ -93,7 +109,7 @@ double GKDNeutron::real_so_depth(int zt, int at, double En) const {
   return vso1 * exp( -vso2 * Ex);
 }
 
-double GKDNeutron::compl_so_depth(int zt, int at, double En) const {
+double GKDNeutron::cmpl_so_depth(int zt, int at, double En) const {
   const double Ex = En - Ef(at);
   return wso1 * Ex * Ex/(Ex*Ex + wso2*wso2);
 }

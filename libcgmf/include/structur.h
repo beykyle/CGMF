@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "gkdNeutron.hpp"
+#include "ompNeutron.hpp"
 #include "dimensions.h"
 #include "gdr.h"
 /*************************************************/
