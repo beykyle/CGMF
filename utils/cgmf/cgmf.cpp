@@ -14,6 +14,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <cstdlib>
+#include <chrono>
 
 #include "cgmfEvents.h"
 #include "cgm.h"
@@ -82,7 +83,12 @@ int main(int argc, char *argv[]) {
 #ifdef MPIRUN
       cout << "Not implemented: Fission fragment yields calculation (negative -nevents option) will run with a single MPI rank.\n";
 #endif
-      rng.set_seed(startingEvent);
+      if (RANDOM_SEED_BY_TIME) {
+        auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+        rng.set_seed(seed);
+      } else {
+        rng.set_seed(startingEvent);
+      }
       set_rng(rng);
       yields = new cgmfYields (ZAIDt, incidentEnergy, -nevents, outfilename);
       printf("\n/// CGMF-generated scission fragment yields Y(Z,A,KE,U,J,Pi,px,py,pz) saved in file %s ///\n", outfilename.c_str());
@@ -95,7 +101,12 @@ int main(int argc, char *argv[]) {
       setPdataOMP(omp_fname);
     }
     for (int i=0; i<nevents; i++) {
-      rng.set_seed(i+ip*nevents+startingEvent);
+      if (RANDOM_SEED_BY_TIME) {
+        auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+        rng.set_seed(seed);
+      } else {
+        rng.set_seed(i+ip*nevents+startingEvent);
+      }
       set_rng(rng);
       if (nevents>=1000 and (i+1)%(nevents/100)==0 and ip==0) printf("%5.2f%%\n",float(i+1)/float(nevents)*100.0);
       if (event != 0) delete event;
