@@ -74,12 +74,12 @@ void set_time_coincidence_window(double timew){
 
 double gammaTimeStamp [ MAX_NUMBER_GAMMAS ];
 
-void setPdataGKD (string fname) {
+void setPdataOMP (string fname) {
   std::ifstream i(fname);
   json j;
   i >> j;
-  pdt[neutron].gkd = new GKDNeutron(j);
-  pdt[gammaray].gkd = nullptr;
+  pdt[neutron].omp_file = new GKDNeutron(j);
+  pdt[gammaray].omp_file = nullptr;
 }
 
 

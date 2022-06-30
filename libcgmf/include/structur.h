@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "gkdNeutron.hpp"
+#include "ompNeutron.hpp"
 #include "dimensions.h"
 #include "gdr.h"
 /*************************************************/
@@ -107,14 +107,14 @@ class Pdata{
     double       spin        ;     /* spin                             */
     double       mass        ;     /* exact particle mass              */
     double       mass_excess ;     /* particle mass excess             */
-    GKDNeutron*  gkd         ;
+    OMPFile*     omp_file    ;
 
     Pdata(){
       omp         = 0;
       spin        = 0.0;
       mass        = 0.0;
       mass_excess = 0.0;
-      gkd         = nullptr;
+      omp_file    = nullptr;
     }
 };
 

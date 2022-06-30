@@ -14,6 +14,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <cstdlib>
+#include <chrono>
 
 #include "cgmfEvents.h"
 #include "cgm.h"
@@ -32,7 +33,7 @@ void readUserInput      (int, char *[], int);
 void recordEvent        (cgmfEvent *);
 void printEventToFile   (FILE *fp, cgmfEvent *, double);
 void printSummaryEvents (cgmfEvent *);
-GKDNeutron* readGKDParamsFromFile(string fname);
+OMPFile* readOMPFile(string fname);
 
 // Default user input values
 string path = "";
@@ -41,7 +42,7 @@ int ZAIDt=0;
 int nevents=0;
 int startingEvent=1;
 string outfilename="";
-string gkd_fname="";
+string omp_fname="";
 double timeCoincidenceWindow=1e-8;
 
 int    sumALF=0, sumAHF=0, sumZLF=0, sumZHF=0;
@@ -82,7 +83,12 @@ int main(int argc, char *argv[]) {
 #ifdef MPIRUN
       cout << "Not implemented: Fission fragment yields calculation (negative -nevents option) will run with a single MPI rank.\n";
 #endif
-      rng.set_seed(startingEvent);
+      if (RANDOM_SEED_BY_TIME) {
+        auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+        rng.set_seed(seed);
+      } else {
+        rng.set_seed(startingEvent);
+      }
       set_rng(rng);
       yields = new cgmfYields (ZAIDt, incidentEnergy, -nevents, outfilename);
       printf("\n/// CGMF-generated scission fragment yields Y(Z,A,KE,U,J,Pi,px,py,pz) saved in file %s ///\n", outfilename.c_str());
@@ -90,12 +96,17 @@ int main(int argc, char *argv[]) {
   } else {
     FILE *fp = fopen(&outfilename[0],"w");
     if(ip==0) fprintf(fp, "# %5i %g %g\n", ZAIDt, incidentEnergy,timeCoincidenceWindow);
-    if (!gkd_fname.empty()) {
-      printf("Reading Koning-Delaroche Global OM parameters from %s\n",  gkd_fname.c_str());
-      setPdataGKD(gkd_fname);
+    if (!omp_fname.empty()) {
+      printf("Reading Koning-Delaroche Global OM parameters from %s\n",  omp_fname.c_str());
+      setPdataOMP(omp_fname);
     }
     for (int i=0; i<nevents; i++) {
-      rng.set_seed(i+ip*nevents+startingEvent);
+      if (RANDOM_SEED_BY_TIME) {
+        auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+        rng.set_seed(seed);
+      } else {
+        rng.set_seed(i+ip*nevents+startingEvent);
+      }
       set_rng(rng);
       if (nevents>=1000 and (i+1)%(nevents/100)==0 and ip==0) printf("%5.2f%%\n",float(i+1)/float(nevents)*100.0);
       if (event != 0) delete event;
@@ -407,7 +418,7 @@ void readUserInput (int argc, char *argv[], int ip) {
         startingEvent=atoi(optarg);
         break;
       case 'o':
-        gkd_fname = optarg;
+        omp_fname = optarg;
       default:
         break;
     }
