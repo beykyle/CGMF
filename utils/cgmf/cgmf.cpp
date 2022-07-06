@@ -43,6 +43,7 @@ int nevents=0;
 int startingEvent=1;
 string outfilename="";
 string omp_fname="";
+unsigned long long seed = 1357;
 double timeCoincidenceWindow=1e-8;
 
 int    sumALF=0, sumAHF=0, sumZLF=0, sumZHF=0;
@@ -84,9 +85,13 @@ int main(int argc, char *argv[]) {
       cout << "Not implemented: Fission fragment yields calculation (negative -nevents option) will run with a single MPI rank.\n";
 #endif
       if (RANDOM_SEED_BY_TIME) {
-        auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+        seed = 2*std::chrono::system_clock::now().time_since_epoch().count()+1;
         rng.set_seed(seed);
-      } else {
+      } 
+      else if (RANDOM_SEED_BY_ARG) {
+        rng.set_seed(seed);
+      }
+      else {
         rng.set_seed(startingEvent);
       }
       set_rng(rng);
@@ -102,7 +107,11 @@ int main(int argc, char *argv[]) {
     }
     for (int i=0; i<nevents; i++) {
       if (RANDOM_SEED_BY_TIME) {
-        auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+        seed = 2*std::chrono::system_clock::now().time_since_epoch().count() +1;
+        printf("Using seed: %llu\n", seed);
+        rng.set_seed(seed);
+      } 
+      else if (RANDOM_SEED_BY_ARG) {
         rng.set_seed(seed);
       } else {
         rng.set_seed(i+ip*nevents+startingEvent);
@@ -419,6 +428,8 @@ void readUserInput (int argc, char *argv[], int ip) {
         break;
       case 'o':
         omp_fname = optarg;
+      case 'r':
+        seed = stoull(optarg);
       default:
         break;
     }
