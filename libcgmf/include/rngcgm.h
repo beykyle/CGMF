@@ -20,6 +20,7 @@
 
 #include <random>
 #include <functional>
+#include <cassert>
 
 /*!
 
@@ -35,10 +36,12 @@ class UniformRNG{
     std::mt19937 gen;
   public:
     UniformRNG (int s) : seed(s) {
+      assert(s>0);
       std::uniform_real_distribution<double> dist(0.0,1.0);
       std::mt19937 gen(seed);
     }
     void set_seed (int s) {
+      assert(s>0);
       seed = s;
       gen.seed(seed);
     }
