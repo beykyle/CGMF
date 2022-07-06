@@ -16,6 +16,7 @@
 #define LEVELDIRECTORY "levels/"
 #define RIPLDATA "ripl3-levels.dat"
 #define DISCRETEDATA "discreteLevels.dat" // used to be called 'cgmfDiscreteLevels-2015.dat'
+//#define DISCRETEDATA "cgmf-discreteLevels-add10.dat" // used to be called 'cgmfDiscreteLevels-2015.dat'
 
 #include "structur.h"
 
