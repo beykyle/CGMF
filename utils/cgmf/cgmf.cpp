@@ -430,6 +430,7 @@ void readUserInput (int argc, char *argv[], int ip) {
         omp_fname = optarg;
       case 'r':
         seed = stoull(optarg);
+        break;
       default:
         break;
     }
