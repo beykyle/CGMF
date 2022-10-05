@@ -89,12 +89,15 @@ class Histories:
 		self.nEcm   = self.histories[:,8]
 		self.nEcmLF = self.nEcm[::2]
 		self.nEcmHF = self.nEcm[1::2]
+		self.gEcm   = self.histories[:,10]
+		self.gEcmLF = self.gEcm[::2]
+		self.gEcmHF = self.gEcm[1::2]
 
 		# neutron and gamma energies in the lab
 		self.nElab   = self.histories[:,9]
 		self.nElabLF = self.nElab[::2]
 		self.nElabHF = self.nElab[1::2]
-		
+
 		self.gElab   = self.histories[:,11]
 		self.gElabLF = self.gElab[::2]
 		self.gElabHF = self.gElab[1::2]
@@ -503,6 +506,10 @@ class Histories:
 	def getGammaElab (self):
 		"""Returns a list of lists of the gamma energies for each fission fragment"""
 		return (self.gElab)
+
+    def getGammaEcm (self):
+		"""Returns a list of lists of the gamma energies in the cm frame for each fission fragment"""
+		return (self.gEcm)
 
 	def getGammaAges (self):
 		"""Returns a list of the gamma times"""
