@@ -10,8 +10,8 @@
 #
 # @section Description
 # The class Histories provides routines to read complete CGMF Monte Carlo history
-# files, return arrays or lists of important quantities for further analyses, 
-# compute average quantities, distributions and correlations, and provide a 
+# files, return arrays or lists of important quantities for further analyses,
+# compute average quantities, distributions and correlations, and provide a
 # summary table of the main average quantities.
 #
 
@@ -21,7 +21,7 @@ import sys
 
 # Functions
 class Histories:
-	
+
 	def __init__ (self, filename, nevents=None):
 		"""! Initializes the Histories class
 
@@ -48,20 +48,20 @@ class Histories:
 		except TypeError:
 			if (nevents is not None):
 				sys.exit('nevents must be a number')
-                                
 
-			
-		# read the history file	
+
+
+		# read the history file
 		self.histories = self._readHistoryFileFromCGMF (filename,nevents)
 
 		self.numberFragments = len(self.histories)
 		self.numberEvents = int(self.numberFragments/2)
-		
+
 		# print a warning if nevents is greater than the number of events read
 		if (nevents is not None and nevents>self.numberEvents):
 			print ('WARNING')
 			print ('You asked for ',int(nevents),' events and there are only ',self.numberEvents,' in this history file')
-			
+
 		self.A = self.histories[:,0].astype(int)
 		self.Z = self.histories[:,1].astype(int)
 		self.N = self.A-self.Z
@@ -78,7 +78,7 @@ class Histories:
 		self.nuLF  = self.nu[::2]
 		self.nuHF  = self.nu[1::2]
 		self.nutot = self.nuLF+self.nuHF
-		
+
 		# gamma multiplicities
 		self.nug    = self.histories[:,7].astype(int)
 		self.nugLF  = self.nug[::2]
@@ -135,7 +135,7 @@ class Histories:
 		self.TKEpre = self.KEpre[::2]+self.KEpre[1::2]
 		# Total Kinetic Energy (MeV) after neutron emission
 		self.TKEpost = self.KEpost[::2]+self.KEpost[1::2]
-	
+
 		# Total eXcitation Energy (MeV)
 		self.TXE = self.U[::2]+self.U[1::2]
 
@@ -215,14 +215,14 @@ class Histories:
 			data = line[1:].strip().split()
 			ZAIDc   = int(data[0])
 			Zc = int(ZAIDc/1000)
-			Ac = int(ZAIDc)-1000*Zc + 1 #-- add incident neutron to get CN 
+			Ac = int(ZAIDc)-1000*Zc + 1 #-- add incident neutron to get CN
 			Asym = int(float(Ac)/2.0)
 			Einc    = float(data[1])
 			if (Einc==0.0):
 				Ac = Ac - 1 #-- no incident neutron for spontaneous fission
 			if (len(data)>2):
 				self.time = float(data[-1]) # timing cut-off for gammas, -1 records all times of emission
-			else: 
+			else:
 				self.time = 0
 
 		isLightFragment=True
@@ -238,10 +238,10 @@ class Histories:
 			line = f.readline()
 			if (len(line)==0):
 				break
-	
+
 			data = line.split()
 			nfragments+=1
-			
+
 			A.append(int(data[0]))
 			Z.append(int(data[1]))
 			U.append(float(data[2]))
@@ -254,7 +254,7 @@ class Histories:
 				Al=int(data[0])
 			else:
 				Ah=int(data[0])
-		
+
 			nn=int(data[7])
 			ng=int(data[8])
 			npn=int(data[9])
@@ -269,7 +269,7 @@ class Histories:
 			postFF=[]
 			preFF.append  (np.array([float(data[0]),float(data[1]),float(data[2])]))
 			postFF.append (np.array([float(data[3]),float(data[4]),float(data[5])]))
-			
+
 			pfx = float(data[0])
 			pfy = float(data[1])
 			pfz = float(data[2])
@@ -293,7 +293,7 @@ class Histories:
 				for i in range(nn):
 					cmDn.append(np.array([float(data[0+i*4]),float(data[1+i*4]),float(data[2+i*4])]))
 					cmEn.append(float(data[3+i*4]))
-	
+
 				# in lab frame
 				data=f.readline().split()
 				for i in range(nn):
@@ -339,14 +339,14 @@ class Histories:
 					labEpren.append(0.0)
 
 			#-- store in final list for output
-			
+
 			cmNeutronEnergies.append(cmEn)
 			cmNeutronDircos.append(cmDn)
 			labNeutronEnergies.append(labEn)
 			labNeutronDircos.append(labDn)
 			labPreFissionNeutronEnergies.append(labEpren)
 			labPreFissionNeutronDircos.append(labDpren)
-											 
+
 			cmGammaEnergies.append(Eg)
 			cmGammaDircos.append(Dg)
 			labGammaEnergies.append(Eg)
@@ -362,7 +362,7 @@ class Histories:
 			postFragmentsZ.append (pfz2)
 
 		f.close()
-		
+
 		nevents = int(nfragments/2)
 
 		data = np.dstack((A,Z,U,J,P,KEpre,nmult,gmult,cmNeutronEnergies,labNeutronEnergies,cmGammaEnergies, labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost))
@@ -373,7 +373,7 @@ class Histories:
 		return (data)
 
 	# Functions to return all quantities recorded
-	
+
 	def getFissionHistories(self):
 		"""Returns a list with the full simulation history"""
 		return (self.histories)
@@ -386,11 +386,11 @@ class Histories:
 	def getTimeCoincidenceWindow(self):
 		"""Returns the time coincidence window for the gamma rays"""
 		return (self.time)
-	
+
 	def getNumberEvents(self):
 		"""Returns the number of simulated events"""
 		return (self.numberEvents)
-	
+
 	def getA(self):
 		"""Returns a list of the mass (A) for each fragment"""
 		return (self.A)
@@ -406,7 +406,7 @@ class Histories:
 	def getU(self):
 		"""Returns a list of excitation energy (U) for each fragment"""
 		return (self.U)
-	
+
 	def getJ(self):
 		"""Returns a list of spin (J) for each fragment"""
 		return (self.J)
@@ -426,7 +426,7 @@ class Histories:
 	def getNu(self):
 		"""Returns a list of the number of neutrons for each fission fragment (no pre-fission)"""
 		return (self.nu)
-	
+
 	def getNuEvent(self):
 		"""Returns a list of the total number of neutrons for each fission event (no pre-fission)"""
 		return (self.nuLF+self.nuHF)
@@ -452,7 +452,7 @@ class Histories:
 	def getNutot(self):
 		"""Returns a list of the total number of neutrons for each fission event including pre-fission neutrons"""
 		return (self.nuLF+self.nuHF+self.preFissionNu)
-	
+
 	def getPreFissionNu(self):
 		"""Returns a list of the number of pre-fission neutrons for each fission event"""
 		return (self.preFissionNu)
@@ -478,11 +478,11 @@ class Histories:
 	def getNugHF(self):
 		"""Returns a list of the number of gammas emitted for each heavy fission fragment"""
 		return (self.nugHF)
-	
+
 	def getNugtot(self):
 		"""Returns a list of the total number of gammas per fission event"""
 		return (self.nugLF+self.nugHF)
-	
+
 	def getTKEpre(self):
 		"""Returns a list of the total kinetic energy per fission event (pre neutron emission)"""
 		return (self.TKEpre)
@@ -523,19 +523,19 @@ class Histories:
 	def getPreFissionNeutronDircos (self):
 		"""Returns a list of lists of the neutron directional cosines before fission for each fission event"""
 		return (self.preFissionNeutronDircos)
-	
+
 	def getFragmentMomentumPre(self):
 		"""Returns a list of momenta vectors for each fission fragment before neutron and gamma emission"""
 		return (self.preFF)
-	
+
 	def getFragmentMomentumPost(self):
 		"""Returns a list of momenta vectors for each fission fragment after neutron and gamma emission"""
 		return (self.postFF)
-	
+
 	def getLabNeutronDircos (self):
 		"""Returns a list of neutron directional cosines for each fission fragment in the lab frame"""
 		return (self.labNeutronDircos)
-	
+
 	def getcmNeutronDircos (self):
 		"""Returns a list of neutron directional cosines for each fission fragment in the center of mass frame"""
 		return (self.cmNeutronDircos)
@@ -616,9 +616,9 @@ class Histories:
 		"""Returns the average gamma multiplicity, per fission fragment
 
 		timeWindow - logical, if included, returns the multiplicity as a function of time
-		
+
 		OR
-		
+
 		timeWindow - numpy array or list of times at which to calculate the average gamma multiplicity, s
 
 		Eth - lower threshold for gamma energy, MeV
@@ -636,7 +636,7 @@ class Histories:
 				Eth = Eth
 			else:
 				Eth = 0.
-				
+
 			photonAges = []
 			photonEnergies = []
 			for i in range(len(ages)):
@@ -646,7 +646,7 @@ class Histories:
 			photonEnergies = np.array(photonEnergies)
 
 			nug = []
-			for i in times:	
+			for i in times:
 				mask = np.logical_and(photonAges<=i,photonEnergies>=Eth)
 				nug.append(float(len(photonAges[mask])))
 			nug = np.array(nug)
@@ -655,14 +655,14 @@ class Histories:
 
 		else:
 			return (np.mean(self.nug))
-	
+
 	def nubargtot(self,timeWindow=None,Eth=None):
 		"""Returns the average gamma multiplicity, per fission event
 
 		timeWindow - logical, if included, returns the multiplicity as a function of time
-		
+
 		OR
-		
+
 		timeWindow - numpy array or list of times at which to calculate the average gamma multiplicity, s
 
 		Eth - lower threshold for gamma energies, MeV
@@ -682,7 +682,7 @@ class Histories:
 				Eth = Eth
 			else:
 				Eth = 0.
-				
+
 			photonAges = []
 			photonEnergies = []
 			for i in range(len(ages)):
@@ -692,7 +692,7 @@ class Histories:
 			photonEnergies = np.array(photonEnergies)
 
 			nug = []
-			for i in times:	
+			for i in times:
 				mask = np.logical_and(photonAges<=i,photonEnergies>=Eth)
 				nug.append(float(len(photonAges[mask])))
 			nug = np.array(nug)
@@ -709,7 +709,7 @@ class Histories:
 	#################################################################
 	#-- compute the mean value of a list of lists			#
 	#################################################################
-	
+
 	def meanList (self, listOfValues):
 		"""Returns the mean of a list of lists (such as neutron energy)
 
@@ -720,7 +720,7 @@ class Histories:
 			l+=x
 		return (np.mean(np.asarray(l)))
 
-	#-- mean energies of neutrons in the lab frame			
+	#-- mean energies of neutrons in the lab frame
 	def meanNeutronElab(self):
 		"""Returns the mean neutron energy in the lab frame, with pre-fission neutrons"""
 		nE = self.nElab
@@ -728,17 +728,17 @@ class Histories:
 		nuPE = self.preFissionNu
 		l = []
 		for x in nE:
-			l += x	
+			l += x
 		for i in range(len(nEPE)):
 			if (nuPE[i]>0):
 				l += nEPE[i]
-		
+
 		return (np.mean(l))
 
 	def meanNeutronElabLF (self):
 		"""Returns the mean energy of neutrons emitted from the light fragment in the lab frame"""
 		return (self.meanList(self.nElabLF))
-	
+
 	def meanNeutronElabHF (self):
 		"""Returns the mean energy of neutrons emitted from the heavy fragment in the lab frame"""
 		return (self.meanList(self.nElabHF))
@@ -756,7 +756,7 @@ class Histories:
 	def meanNeutronEcmLF (self):
 		"""Returns the mean energy of neutrons emitted from the light fragment in the center of mass frame"""
 		return (self.meanList(self.nEcmLF))
-	
+
 	def meanNeutronEcmHF (self):
 		"""Returns the mean energy of neutrons emitted from the heavy fragment in the center of mass frame"""
 		return (self.meanList(self.nEcmHF))
@@ -774,7 +774,7 @@ class Histories:
 			return (np.mean(l))
 		else:
 			return(0.0)
-	
+
 	#-- mean energies of gammas in the lab frame
 	def meanGammaElab(self):
 		"""Returns the mean energies of the gammas in the lab frame"""
@@ -783,7 +783,7 @@ class Histories:
 	def meanGammaElabLF (self):
 		"""Returns the mean energies of the gammas emitted from the light fragments in the lab frame"""
 		return (self.meanList(self.gElabLF))
-	
+
 	def meanGammaElabHF (self):
 		"""Returns the mean energies of the gammas emitted from the heavy fragments in the lab frame"""
 		return (self.meanList(self.gElabHF))
@@ -854,9 +854,9 @@ class Histories:
 
 	def _qA (self, dummy, quantity):
 		"""Returns two arrays, for the fragment mass and the quantity of interest
-		
+
 		quantity -- observable of interest as a function of mass, currently supported:
-		nuA -- neutron multiplicity 
+		nuA -- neutron multiplicity
 		nugA -- gamma multiplicity
 		UA -- excitation energy
 		spinA -- spin
@@ -890,19 +890,19 @@ class Histories:
 	def nubarA (self):
 		"""Returns a two-dimensional array for neutron multiplicity as a function of A of format [A,nu]"""
 		return (self._qA(self,'nuA'))
-	
+
 	def nubargA (self):
 		"""Returns a two-dimensional array for gamma multiplicity as a function of A of format [A,nug]"""
 		return (self._qA(self, 'nugA'))
-	
+
 	def UA (self):
 		"""Returns a two-dimensional array for excitation energy as a function of A of format [A,U]"""
 		return (self._qA(self, 'UA'))
-	
+
 	def TKEA (self):
 		"""Returns a two-dimensional array for total kinetic energy as a function of A of format [A,TKE]"""
 		return (self._qA(self, 'TKEA'))
-	
+
 	def spinA (self):
 		"""Returns a two-dimensional array for spin as a function of A of format [A,J]"""
 		return (self._qA(self, 'spinA'))
@@ -913,7 +913,7 @@ class Histories:
 
 	def _qTKE (self, dummy, quantity):
 		"""Returns two arrays, for the fission event total kinetic energy and the quantity of interest
-		
+
 		quantity -- observable of interest as a function of total kinetic energy, currently supported:
 		nuTKE -- neutron multiplicity per fission event
 		nugTKE -- gamma multiplicity per fission event
@@ -975,8 +975,8 @@ class Histories:
 
 	def pfns (self,Eth=None):
 		"""Returns two arrays, one for the energy grid, and one for the corresponding prompt fission neutron spectrum
-		
-		Eth - neutron threshold energy, MeV 
+
+		Eth - neutron threshold energy, MeV
 		"""
 		if (Eth is not None):
 			Eth = float(Eth)
@@ -1002,7 +1002,7 @@ class Histories:
 
 	def pfgs (self,Eth=None,minTime=None,maxTime=None):
 		"""Returns two arrays, one for the energy grid, and one for the corresponding prompt fission gamma spectrum
-		
+
 		Eth - optional gamma threshold energy, MeV
 
 		minTime/maxTime - optional lower/upper bound for the time window for the photon emission, s
@@ -1050,7 +1050,7 @@ class Histories:
 			afterNeutronEmission = afterEmission
 		else:
 			afterNeutronEmission = True
-		
+
 		if (afterNeutronEmission):
 			mom = self.getFragmentMomentumPost()
 		else:
@@ -1076,12 +1076,12 @@ class Histories:
 		includePrefission - include (True, default) or don't include (False) pre-fission neutrons
 			only for the calculations in the lab frame
 		"""
-		
+
 		if (Eth is not None):
 			Eth = float(Eth)
 		else:
 			Eth = 0.0
-	
+
 		if (lab is not None):
 			inLabFrame = lab
 		else:
@@ -1101,7 +1101,7 @@ class Histories:
 			nE = self.getNeutronEcm()
 			ncos = self.getcmNeutronDircos()
 			includePreFissionNeutrons = False
-			
+
 
 		ncosAll = []
 		ncosLight = []
@@ -1154,13 +1154,13 @@ class Histories:
 		"""Returns cos(theta) between the neutrons and the fragments
 
 		Eth - neutron threshold energy, MeV
-		
+
 		afterEmission - angles after neutron emission (True, default), before neutron emission (False)
 
 		includePrefission - include (True, default) or don't include (False) pre-fission neutrons
 			only for the calculations in the lab frame
 		"""
-		
+
 		if (Eth is not None):
 			Eth = float(Eth)
 		else:
@@ -1180,7 +1180,7 @@ class Histories:
 			afterNeutronEmission = afterEmission
 		else:
 			afterNeutronEmission = True
-		
+
 		if (afterNeutronEmission):
 			mom = self.getFragmentMomentumPost()
 		else:
@@ -1190,7 +1190,7 @@ class Histories:
 
 		cosThetaFF = ((mom.T/np.sum(mom**2,axis=1)**(0.5)).T).tolist()
 		cosThetaFF = np.array(cosThetaFF)
-			
+
 
 		ncosAll = []
 		ncosLight = []
@@ -1247,7 +1247,7 @@ class Histories:
 		nFcosHeavy = ncosHeavy[nEHeavy>=Eth]*FcosHeavy[nEHeavy>=Eth]
 		nFcosHeavy = np.sum(nFcosHeavy,axis=1)
 
-		return (nFcosAll,nFcosLight,nFcosHeavy)	
+		return (nFcosAll,nFcosLight,nFcosHeavy)
 
 	#################################################################
 	#-- Angular distribution of of n-n opening angle		#
@@ -1257,7 +1257,7 @@ class Histories:
 		"""Returns an array of the cosine of the angle between each neutron pair of neutrons emitted from the same fragment, first for the light, then heavy, then all fragments
 
 		lab -- neutrons in the lab frame
-		
+
 		cm -- neutrons in the center of mass frame
 		"""
 		nLF = self.nuLF
@@ -1299,9 +1299,9 @@ class Histories:
 		"""Calculates the distribution of fission fragments (or products), given a gamma-ray energy and energy resolution
 
 		Egamma - array of gamma-ray energies (in lab frame) [MeV]
-		
+
 		dEgamma - array of gamma-ray energy resolutions [MeV]
-		
+
 		post - True (False) indicates that post- (pre-) neutron emission fission products (fragments) will be returned
 		"""
 
@@ -1359,16 +1359,16 @@ class Histories:
 		"""Returns the gamma-ray multiplicity as a function of time since the fission event for a specific isotope
 
 		Afragment - mass of a given isotope
-		
+
 		Zfragment - charge of a given isotope
-		
+
 		If both Afragment and Zfragment are given, the multiplicity is calculated for that isotope (default all isotopes)
 
 		Eth - threshold gamma-ray energy for the calculation, MeV
 
 		minTime/maxTime - define the window over which the number of gamma rays is counted, s
 		"""
-	
+
 		if (maxTime is not None and minTime is not None):
 			tMin = minTime
 			tMax = maxTime
@@ -1403,7 +1403,7 @@ class Histories:
 				if (mask[i]):
 					photonAges += ages[i]
 					photonEnergies += gE[i]
-				
+
 		else:
 			# we calculate the multiplicity from all of the fission fragments
 			for i in range(len(ages)):
@@ -1424,25 +1424,25 @@ class Histories:
 
 	def isomericRatio(self,thresholdTime,A,Z,Jm,Jgs):
 		"""Calculates the isomeric ratio for the given state, relative to the ground state
-		
+
 		thresholdTime - time to separate isomeric state from ground state, s
-		
+
 		A - mass of fragment of interest
-		
+
 		Z - charge of fragment of interest
-		
+
 		Jm - spin of the isomeric state
-		
+
 		Jgs - spin of the ground state
 		"""
-		
+
 		Aall = self.getA()
 		Zall = self.getZ()
 		nu = self.getNu()
 		Aall = Aall - nu
 		ages = self.getGammaAges()
 		mask = np.logical_and(Aall==A,Zall==Z)
-		
+
 		photonAges = []
 		nIsomer = 0
 		nGroundState = 0
@@ -1484,8 +1484,8 @@ class Histories:
 
 		#-- Neutrons
 		table.append([r'$\langle \nu\rangle$',"{0:.3f}".format(np.mean(self.nuLF+self.nuHF)),"{0:.3f}".format(np.mean(self.nuLF)),"{0:.3f}".
-			format(np.mean(self.nuHF)),"{0:.3f}".format(np.mean(self.preFissionNu)),"{0:.3f}".format(np.mean(self.nutot+self.preFissionNu))])		
-		table.append([r'$\langle \epsilon_n^{cm}\rangle$ (MeV)', "{0:.3f}".format(self.meanNeutronEcmFragments()), 
+			format(np.mean(self.nuHF)),"{0:.3f}".format(np.mean(self.preFissionNu)),"{0:.3f}".format(np.mean(self.nutot+self.preFissionNu))])
+		table.append([r'$\langle \epsilon_n^{cm}\rangle$ (MeV)', "{0:.3f}".format(self.meanNeutronEcmFragments()),
 			"{0:.3f}".format(self.meanNeutronEcmLF()),"{0:.3f}".format(self.meanNeutronEcmHF())])
 		table.append([r'$\langle E_n^{lab}\rangle$ (MeV)',"{0:.3f}".format(self.meanNeutronElabFragments()),
 			"{0:.3f}".format(self.meanNeutronElabLF()),"{0:.3f}".format(self.meanNeutronElabHF()),
@@ -1504,15 +1504,15 @@ class ListTable(list):
 	""" Overridden list class which takes a 2-dimensional list of
 		the form [[1,2,3],[4,5,6]], and renders an HTML Table in
 		IPython Notebook. """
-			
+
 	def _repr_html_(self):
 		html = ["<table width=60%>"]
 		for row in self:
 			html.append("<tr>")
-		
+
 			for col in row:
 				html.append("<td>{0}</td>".format(col))
-			
+
 			html.append("</tr>")
 		html.append("</center>")
 		return ''.join(html)
