@@ -507,13 +507,12 @@ class Histories:
 		"""Returns a list of lists of the gamma energies for each fission fragment"""
 		return (self.gElab)
 
-    def getGammaEcm (self):
-		"""Returns a list of lists of the gamma energies in the cm frame for each fission fragment"""
+	def getGammaEcm (self):
+		"""Returns a list of lists of the gamma energies for each fission fragment"""
 		return (self.gEcm)
 
 	def getGammaAges (self):
 		"""Returns a list of the gamma times"""
-
 		return (self.gTimes)
 
 	def getPreFissionNeutronElab (self):
