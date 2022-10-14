@@ -182,6 +182,7 @@ class Histories:
 
     cmNeutronDircos    = [] #-- neutron directional cosines in center-of-mass frame of the fragment
     cmNeutronEnergies  = [] #-- neutron energies in CM frame (MeV)
+    cmNeutronL         = [] #-- neutron energies in CM frame (MeV)
     labNeutronDircos   = [] #-- neutron directional cosines in LAB frame
     labNeutronEnergies = [] #-- neutron energies in LAB frame (MeV)
 
@@ -282,6 +283,7 @@ class Histories:
       # in center of mass frame
       cmDn=[]
       cmEn=[]
+      cmLn=[]
       labDn=[]
       labEn=[]
       labDpren=[]
@@ -290,9 +292,11 @@ class Histories:
       if (nn>0):
 
         data=f.readline().split()
+        num_dptns = 5 # number of data points per neutron
         for i in range(nn):
-          cmDn.append(np.array([float(data[0+i*4]),float(data[1+i*4]),float(data[2+i*4])]))
-          cmEn.append(float(data[3+i*4]))
+          cmDn.append(np.array([float(data[0+i*num_dptns]),float(data[1+i*num_dptns]),float(data[2+i*num_dptns])]))
+          cmEn.append(float(data[3+i*num_dptns]))
+          cmLn.append(float(data[4+i*num_dptns]))
 
         # in lab frame
         data=f.readline().split()
