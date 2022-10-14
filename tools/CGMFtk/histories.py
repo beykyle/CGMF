@@ -508,6 +508,10 @@ class Histories:
     """Returns a list of lists of the neutron energies in the cm frame for each fission fragment"""
     return (self.nEcm)
 
+  def getNeutronL (self):
+    """Returns a list of lists of the neutron energies in the cm frame for each fission fragment"""
+    return (self.cmNeutronL)
+
   def getGammaElab (self):
     """Returns a list of lists of the gamma energies for each fission fragment"""
     return (self.gElab)
