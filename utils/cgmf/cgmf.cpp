@@ -479,6 +479,7 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
   double eng; // energy
   double diru, dirv, dirw; // directional cosines
   double age; // time of emission of a photon
+  int l;
 
   // LIGHT FRAGMENT --------------------------
 
@@ -498,11 +499,12 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
 
   // Center-of-Mass neutron (energy, directional cosines) from light fragment
   for (int n1=0; n1<nul; n1++) {
+    l  = 0; //TODO
     eng  = event->getCmNeutronEnergy(n1);
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
-    fprintf(fp, "%.3f %.3f %.3f %.3f ", diru, dirv, dirw, eng);
+    fprintf(fp, "%.3f %.3f %.3f %.3f %d", diru, dirv, dirw, eng, l);
   }
   if (nul>0) fprintf(fp, "\n");
 
@@ -549,11 +551,12 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
 
   // Center-of-Mass neutron (energy, directional cosines) from heavy fragment
   for (int n1=nul; n1<nul+nuh; n1++) {
+    l  = 0; //TODO
     eng  = event->getCmNeutronEnergy(n1);
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
-    fprintf(fp, "%.3f %.3f %.3f %.3f ", diru, dirv, dirw, eng);
+    fprintf(fp, "%.3f %.3f %.3f %.3f %d ", diru, dirv, dirw, eng, l);
   }
   if (nuh>0) fprintf(fp, "\n");
 
