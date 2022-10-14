@@ -375,7 +375,7 @@ class Histories:
 
     data = data[0,:,:]
 
-    return (data, np.array(cmNeutronL))
+    return (data, np.array(cmNeutronL, dtype=int))
 
   # Functions to return all quantities recorded
 
@@ -509,7 +509,7 @@ class Histories:
     return (self.nEcm)
 
   def getNeutronL (self):
-    """Returns a list of lists of the neutron energies in the cm frame for each fission fragment"""
+    """Returns a 2D array of integers of L values, 0th axis being history, 1st neutron """
     return (self.cmNeutronL)
 
   def getGammaElab (self):
