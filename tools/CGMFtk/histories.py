@@ -52,7 +52,7 @@ class Histories:
 
 
     # read the history file
-    self.histories = self._readHistoryFileFromCGMF (filename,nevents)
+    self.histories, self.cmNeutronL = self._readHistoryFileFromCGMF (filename,nevents)
 
     self.numberFragments = len(self.histories)
     self.numberEvents = int(self.numberFragments/2)
@@ -182,7 +182,7 @@ class Histories:
 
     cmNeutronDircos    = [] #-- neutron directional cosines in center-of-mass frame of the fragment
     cmNeutronEnergies  = [] #-- neutron energies in CM frame (MeV)
-    cmNeutronL         = [] #-- neutron energies in CM frame (MeV)
+    cmNeutronL         = [] #-- neutron OAM in CM frame
     labNeutronDircos   = [] #-- neutron directional cosines in LAB frame
     labNeutronEnergies = [] #-- neutron energies in LAB frame (MeV)
 
@@ -346,6 +346,7 @@ class Histories:
 
       cmNeutronEnergies.append(cmEn)
       cmNeutronDircos.append(cmDn)
+      cmNeutronL.append(cmLn)
       labNeutronEnergies.append(labEn)
       labNeutronDircos.append(labDn)
       labPreFissionNeutronEnergies.append(labEpren)
@@ -374,7 +375,7 @@ class Histories:
 
     data = data[0,:,:]
 
-    return (data)
+    return (data, np.array(cmNeutronL))
 
   # Functions to return all quantities recorded
 
