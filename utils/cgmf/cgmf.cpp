@@ -505,9 +505,9 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
     if (PRINT_DELTA_L) 
-      fprintf(fp, "%.3f %.3f %.3f %.3f %d", diru, dirv, dirw, eng, l);
+      fprintf(fp, "%.3f %.3f %.3f %.3f %d ", diru, dirv, dirw, eng, l);
     else 
-      fprintf(fp, "%.3f %.3f %.3f %.3f", diru, dirv, dirw, eng);
+      fprintf(fp, "%.3f %.3f %.3f %.3f ", diru, dirv, dirw, eng);
   }
   if (nul>0) fprintf(fp, "\n");
 
@@ -561,9 +561,9 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
     dirw = event->getCmNeutronDircosw(n1);
 
     if (PRINT_DELTA_L) 
-      fprintf(fp, "%.3f %.3f %.3f %.3f %d", diru, dirv, dirw, eng, l);
+      fprintf(fp, "%.3f %.3f %.3f %.3f %d ", diru, dirv, dirw, eng, l);
     else 
-      fprintf(fp, "%.3f %.3f %.3f %.3f", diru, dirv, dirw, eng);
+      fprintf(fp, "%.3f %.3f %.3f %.3f ", diru, dirv, dirw, eng);
   }
   if (nuh>0) fprintf(fp, "\n");
 
