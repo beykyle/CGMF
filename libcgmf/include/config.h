@@ -119,9 +119,10 @@ const bool INCLUDE_INTERNAL_CONVERSION = true;
  2: output MC history in the FFD input format
  */
 
-const bool RANDOM_SEED_BY_TIME = false;
-const bool RANDOM_SEED_BY_ARG  = false;
+const bool PRINT_DELTA_L            = false;
+const bool RANDOM_SEED_BY_TIME      = false;
+const bool RANDOM_SEED_BY_ARG       = false;
 const bool PERTURB_EXCITATON_ENERGY = true;
-const int  EVENT_OUTPUT_FORMAT = 0;
+const int  EVENT_OUTPUT_FORMAT      = 0;
 
 #endif //__CONFIG_H__
