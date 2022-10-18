@@ -43,6 +43,8 @@ int nevents=0;
 int startingEvent=1;
 string outfilename="";
 string omp_fname="";
+bool sf = false;
+int ZAID_sf = 0;
 unsigned long long seed = 1357;
 double timeCoincidenceWindow=1e-8;
 
@@ -101,8 +103,10 @@ int main(int argc, char *argv[]) {
   } else {
     FILE *fp = fopen(&outfilename[0],"w");
     if(ip==0) fprintf(fp, "# %5i %g %g\n", ZAIDt, incidentEnergy,timeCoincidenceWindow);
-    if (!omp_fname.empty()) {
-      printf("Reading Koning-Delaroche Global OM parameters from %s\n",  omp_fname.c_str());
+    if (!omp_fname.empty() ) {
+      if (ip == 0) {
+        printf("Reading Koning-Delaroche Global OM parameters from %s\n",  omp_fname.c_str());
+      }
       setPdataOMP(omp_fname);
     }
     for (int i=0; i<nevents; i++) {
@@ -119,7 +123,11 @@ int main(int argc, char *argv[]) {
       set_rng(rng);
       if (nevents>=1000 and (i+1)%(nevents/100)==0 and ip==0) printf("%5.2f%%\n",float(i+1)/float(nevents)*100.0);
       if (event != 0) delete event;
-      event = new cgmfEvent(ZAIDt, incidentEnergy, 0.0, timeCoincidenceWindow);
+      if(sf and ip == 0) {
+        printf("Running single fragment de-excitation for zaid=%d.\n"
+               "P(E*,J_0,TKE | A, Z) sampled as from fission on %d with incident energy %.3f \n", ZAID_sf, ZAIDt, incidentEnergy);
+      }
+      event = new cgmfEvent(ZAIDt, incidentEnergy, 0.0, timeCoincidenceWindow, ZAID_sf);
       recordEvent (event);
       printEventToFile (fp, event, timeCoincidenceWindow);
     }
@@ -403,7 +411,7 @@ void readUserInput (int argc, char *argv[], int ip) {
   int p;
 
   // read user input from command line
-  while ((p=getopt(argc,argv,"e:n:i:f:t:d:s:o:"))!=-1) {
+  while ((p=getopt(argc,argv,"e:n:i:f:t:d:s:o:r:g"))!=-1) {
     switch(p){
       case 'e':
         incidentEnergy=atof(optarg);
@@ -431,6 +439,10 @@ void readUserInput (int argc, char *argv[], int ip) {
         break;
       case 'r':
         seed = stoull(optarg);
+        break;
+      case 'g':
+        sf = true;
+        ZAID_sf = atoi(optarg);
         break;
       default:
         break;

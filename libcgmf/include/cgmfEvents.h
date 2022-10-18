@@ -143,7 +143,7 @@ class cgmfEvent: public cgmEvent {
 
 public:
 	
-	cgmfEvent (int , double , double, double = -1.0);
+	cgmfEvent (int , double , double, double = -1.0, int ZAID_sf = -1);
 	cgmfEvent ();
 	~cgmfEvent ();
 

@@ -366,7 +366,9 @@ cgmfEvent::cgmfEvent () {
 /************************************************************************************
              cgmfEvent: derived class constructor, destructor & methods 
  ************************************************************************************/
-cgmfEvent::cgmfEvent  (int isotope, double eng, double time, double timew) : cgmEvent() {
+cgmfEvent::cgmfEvent  (int isotope, double eng, double time, double timew, int ZAID_sf) : cgmEvent() {
+
+  bool sf = (ZAID_sf > 0);
   
 	int nevents = 1;
 	
@@ -379,7 +381,8 @@ cgmfEvent::cgmfEvent  (int isotope, double eng, double time, double timew) : cgm
   neutronNu = 0;
   photonNu  = 0;
 
-  checkInput (isotope, eng);
+  if (not sf) 
+    checkInput (isotope, eng);
 
   // record incident energy and ZAID of target nucleus
   incidentEnergy = eng;
@@ -391,41 +394,76 @@ cgmfEvent::cgmfEvent  (int isotope, double eng, double time, double timew) : cgm
     if(timew>0.0)set_time_coincidence_window(timew);
   }
  	cgmAllocateMemory();
-//	allocateMemory();
-
+  
   lf = new fissionFragmentType [nevents];
   hf = new fissionFragmentType [nevents];
   ff = new FissionFragments (isotope, eng, alphaI);
-	ff->generateInitialFissionFragmentHistories (lf, hf, nevents);
 
-	cout.precision(3);
-	cout << std::fixed;
+  if (not sf) {
 
-  double norm;
-  
-	//-- light fragment calc. --------------------------------------------------
+    ff->generateInitialFissionFragmentHistories (lf, hf, nevents);
 
-  eventLF.A = lf[0].A;
-  eventLF.Z = lf[0].Z;
-  eventLF.U = lf[0].U;
-  eventLF.spin = lf[0].spin;
-  eventLF.parity = lf[0].parity;
-  eventLF.KE = lf[0].KE;
-  for (int i=0; i<3; i++) eventLF.preFragmentMomentum[i] = lf[0].preMomentum[i];
+    cout.precision(3);
+    cout << std::fixed;
 
-  specMCMainFission (&eventLF);
+    double norm;
+    
+    //-- light fragment calc. --------------------------------------------------
 
-  //-- heavy fragment calc. --------------------------------------------------
+    eventLF.A = lf[0].A;
+    eventLF.Z = lf[0].Z;
+    eventLF.U = lf[0].U;
+    eventLF.spin = lf[0].spin;
+    eventLF.parity = lf[0].parity;
+    eventLF.KE = lf[0].KE;
+    for (int i=0; i<3; i++) eventLF.preFragmentMomentum[i] = lf[0].preMomentum[i];
 
-  eventHF.A = hf[0].A;
-  eventHF.Z = hf[0].Z;
-  eventHF.U = hf[0].U;
-  eventHF.spin   = hf[0].spin;
-  eventHF.parity = hf[0].parity;
-  eventHF.KE = hf[0].KE;
-  for (int i=0; i<3; i++) eventHF.preFragmentMomentum[i] = hf[0].preMomentum[i];
+    specMCMainFission (&eventLF);
 
-  specMCMainFission (&eventHF);
+    //-- heavy fragment calc. --------------------------------------------------
+
+    eventHF.A = hf[0].A;
+    eventHF.Z = hf[0].Z;
+    eventHF.U = hf[0].U;
+    eventHF.spin   = hf[0].spin;
+    eventHF.parity = hf[0].parity;
+    eventHF.KE = hf[0].KE;
+    for (int i=0; i<3; i++) eventHF.preFragmentMomentum[i] = hf[0].preMomentum[i];
+
+    specMCMainFission (&eventHF);
+  }
+  else {
+    ff->generateInitialFissionFragmentHistories (lf, hf, nevents);
+
+    cout.precision(3);
+    cout << std::fixed;
+
+    double norm;
+    
+    //-- light fragment calc. --------------------------------------------------
+
+    eventLF.A = lf[0].A;
+    eventLF.Z = lf[0].Z;
+    eventLF.U = lf[0].U;
+    eventLF.spin = lf[0].spin;
+    eventLF.parity = lf[0].parity;
+    eventLF.KE = lf[0].KE;
+    for (int i=0; i<3; i++) eventLF.preFragmentMomentum[i] = lf[0].preMomentum[i];
+
+    specMCMainFission (&eventLF);
+
+    //-- heavy fragment calc. --------------------------------------------------
+
+    eventHF.A = hf[0].A;
+    eventHF.Z = hf[0].Z;
+    eventHF.U = hf[0].U;
+    eventHF.spin   = hf[0].spin;
+    eventHF.parity = hf[0].parity;
+    eventHF.KE = hf[0].KE;
+    for (int i=0; i<3; i++) eventHF.preFragmentMomentum[i] = hf[0].preMomentum[i];
+
+    specMCMainFission (&eventHF);
+  }
 
   neutronNu = eventLF.nu + eventHF.nu;
   photonNu  = eventLF.nug + eventHF.nug;
