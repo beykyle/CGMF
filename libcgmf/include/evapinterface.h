@@ -15,6 +15,6 @@
 
 #include "structur.h"
 
-void evapInterface(Pdata *pdt,Transmission *tc,int c0,int k0,double *sp);
+void evapInterface(Pdata *pdt, Transmission *tc, int c0, int k0, double *sp);
 
 #endif //__EVAPINTERFACE_H__

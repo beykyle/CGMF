@@ -27,7 +27,7 @@
 //#include "masstable_aw95.h"      // Audi Wapstra 1995 table
 //#include "masstable_ripl2.h"     // AW95 + FRDM95 from RIPL2
 //#include "masstable_ripl3.h"     // AW03 + FRDM95 from RIPL3
-#include "masstable_audi2011.h"    // AW11 + FRDM95 from RIPL3
+#include "masstable_audi2011.h" // AW11 + FRDM95 from RIPL3
 
 using namespace std;
 
@@ -38,26 +38,25 @@ using namespace std;
  ******************************************************************************/
 double mass_excess(int z, int a) {
 
-    double mx = 0.0;
-    unsigned int za = z*1000 + a;
+  double mx = 0.0;
+  unsigned int za = z * 1000 + a;
 
-    bool found = false;
-    // Search for this Z and A in the mass table
-    for(int i=0;i<nMassTable;i++){
-	if(MassTable[i].za == za){
-	    found = true;
-	    mx = MassTable[i].mass; // Pull the mass-excess
-	    break;
-	}
+  bool found = false;
+  // Search for this Z and A in the mass table
+  for (int i = 0; i < nMassTable; i++) {
+    if (MassTable[i].za == za) {
+      found = true;
+      mx = MassTable[i].mass; // Pull the mass-excess
+      break;
     }
+  }
 
-    // Send message if Z,A wasn't found
-    if(!found){
-	ostringstream os;
-	os << "mass data for Z " << z << " - A " << a << " not found";
-	cgmTerminateCode(os.str());
-    }
+  // Send message if Z,A wasn't found
+  if (!found) {
+    ostringstream os;
+    os << "mass data for Z " << z << " - A " << a << " not found";
+    cgmTerminateCode(os.str());
+  }
 
-    return(mx);
+  return (mx);
 }
-
