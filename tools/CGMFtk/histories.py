@@ -22,7 +22,7 @@ import sys
 # Functions
 class Histories:
 
-  def __init__ (self, filename, nevents=None):
+  def __init__ (self, filename, nevents=None, ang_mom_printed=False):
     """! Initializes the Histories class
 
     filename -- file path/name
@@ -52,7 +52,8 @@ class Histories:
 
 
     # read the history file
-    self.histories, self.cmNeutronL = self._readHistoryFileFromCGMF (filename,nevents)
+    self.histories = self._readHistoryFileFromCGMF(
+            filename,nevents, ang_mom_printed=ang_mom_printed)
 
     self.numberFragments = len(self.histories)
     self.numberEvents = int(self.numberFragments/2)
@@ -117,6 +118,12 @@ class Histories:
     self.preFissionNeutronElab   = self.histories[1::2,22]
     self.preFissionNeutronDircos = self.histories[1::2,23]
 
+    # angular momentum
+    if ang_mom_printed:
+        self.cmNeutronL = self.histories[:,24]
+    else:
+        self.cmNeutronL = None
+
     # Fission fragment momentum vectors (pre-neutron emission)
     pfx = self.histories[:,13]
     pfy = self.histories[:,14]
@@ -156,7 +163,7 @@ class Histories:
     self.KEh = self.KEpre[1::2]
 
 
-  def _readHistoryFileFromCGMF (self,filename,nevents):
+  def _readHistoryFileFromCGMF (self,filename,nevents, ang_mom_printed=False):
     """ Reads CGMF history file (filename) and returns a list of simulations """
 
     f = open (filename)
@@ -292,11 +299,17 @@ class Histories:
       if (nn>0):
 
         data=f.readline().split()
-        num_dptns = 5 # number of data points per neutron
+
+        if ang_mom_printed:
+            num_dptns = 5 # number of data points per neutron
+        else:
+            num_dptns = 4
+        assert(len(data)%num_dptns == 0)
         for i in range(nn):
           cmDn.append(np.array([float(data[0+i*num_dptns]),float(data[1+i*num_dptns]),float(data[2+i*num_dptns])]))
           cmEn.append(float(data[3+i*num_dptns]))
-          cmLn.append(float(data[4+i*num_dptns]))
+          if ang_mom_printed:
+              cmLn.append(float(data[4+i*num_dptns]))
 
         # in lab frame
         data=f.readline().split()
@@ -370,12 +383,23 @@ class Histories:
 
     nevents = int(nfragments/2)
 
-    data = np.dstack((A,Z,U,J,P,KEpre,nmult,gmult,cmNeutronEnergies,labNeutronEnergies,cmGammaEnergies, labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost))
+    if ang_mom_printed:
+        data = np.dstack(
+                (A,Z,U,J,P,KEpre,nmult,gmult,cmNeutronEnergies,labNeutronEnergies,cmGammaEnergies,
+                 labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,
+                 cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost,cmLn)
+                )
+    else:
+        data = np.dstack(
+                (A,Z,U,J,P,KEpre,nmult,gmult,cmNeutronEnergies,labNeutronEnergies,cmGammaEnergies,
+                 labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,
+                 cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost)
+                )
 
 
     data = data[0,:,:]
 
-    return (data, np.array(cmNeutronL, dtype=int))
+    return (data)
 
   # Functions to return all quantities recorded
 
