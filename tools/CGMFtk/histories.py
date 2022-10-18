@@ -120,7 +120,7 @@ class Histories:
 
     # angular momentum
     if ang_mom_printed:
-        self.cmNeutronL = self.histories[:,24]
+        self.cmNeutronL = self.histories[:,25]
     else:
         self.cmNeutronL = None
 
@@ -387,7 +387,7 @@ class Histories:
         data = np.dstack(
                 (A,Z,U,J,P,KEpre,nmult,gmult,cmNeutronEnergies,labNeutronEnergies,cmGammaEnergies,
                  labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,
-                 cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost,cmLn)
+                 cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost,cmNeutronL)
                 )
     else:
         data = np.dstack(
@@ -395,7 +395,6 @@ class Histories:
                  labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,
                  cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost)
                 )
-
 
     data = data[0,:,:]
 
