@@ -476,6 +476,8 @@ void readUserInput (int argc, char *argv[], int ip) {
 */
 void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow) {
 
+  bool print_j = false;
+
   double eng; // energy
   double diru, dirv, dirw; // directional cosines
   double age; // time of emission of a photon
@@ -504,7 +506,10 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
-    fprintf(fp, "%.3f %.3f %.3f %.3f %d", diru, dirv, dirw, eng, l);
+    if (print_j) 
+      fprintf(fp, "%.3f %.3f %.3f %.3f %d", diru, dirv, dirw, eng, l);
+    else 
+      fprintf(fp, "%.3f %.3f %.3f %.3f", diru, dirv, dirw, eng);
   }
   if (nul>0) fprintf(fp, "\n");
 
@@ -556,7 +561,10 @@ void printEventToFile (FILE *fp, cgmfEvent *event, double timeCoincidenceWindow)
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
-    fprintf(fp, "%.3f %.3f %.3f %.3f %d ", diru, dirv, dirw, eng, l);
+    if (print_j) 
+      fprintf(fp, "%.3f %.3f %.3f %.3f %d", diru, dirv, dirw, eng, l);
+    else 
+      fprintf(fp, "%.3f %.3f %.3f %.3f", diru, dirv, dirw, eng);
   }
   if (nuh>0) fprintf(fp, "\n");
 
