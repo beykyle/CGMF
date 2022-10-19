@@ -1124,7 +1124,7 @@ void FissionFragments::studyEnergySorting() {
  ******************************************************************************/
 void FissionFragments::generateInitialFissionFragmentHistories(
     fissionFragmentType *lightFragment, fissionFragmentType *heavyFragment,
-    const int numberEvents) {
+    const int numberEvents, int ZAIDsf) {
 
   // calculate the anisotropy and CDF
   computeFragmentAngularDistribution();
@@ -1137,14 +1137,20 @@ void FissionFragments::generateInitialFissionFragmentHistories(
       index_save = i;
       if (recomputeYields)
         constructYields(&ffy);
-      sampleFissionFragments(lightFragment + i, heavyFragment + i, &ffy);
+      if (ZAIDsf > 0)
+        generateSingleFissionFragments(lightFragment, heavyFragment, ZAIDsf, &ffy);
+      else 
+        sampleFissionFragments(lightFragment + i, heavyFragment + i, &ffy);
       if (lightFragment[i].U != 0.0 && heavyFragment[i].U != 0.0)
         ++i;
     }
   } else {
     while (i < numberEvents) {
       index_save = i;
-      sampleFissionFragments(lightFragment + i, heavyFragment + i);
+      if (ZAIDsf > 0)
+        generateSingleFissionFragments(lightFragment, heavyFragment, ZAIDsf);
+      else 
+        sampleFissionFragments(lightFragment + i, heavyFragment + i);
       if (!(lightFragment[i].U == 0.0 && heavyFragment[i].U == 0.0))
         i++;
     }
@@ -1186,31 +1192,203 @@ void FissionFragments::generateSingleFissionFragments(
 /*******************************************************************************
  * generateSingleFissionFragments
  *------------------------------------------------------------------------------
- * Used for studying the decay for a specific fragment (ZAIDf) at an excitation
- * energy Eexc. Stores it and its complement in lightFragment, heavyFragment
- * for numberEvents events.
+ * Used for studying the decay for a specific fragment (ZAIDsf), with U, spin, parity
+ * sampled from Y(U,spin,parity|A,Z)
+ *
+ * Assumes YA, YATKE, maxYieldTKEGivenA have been computed
+* TODO assume YATKE and YA are normalized
  ******************************************************************************/
 void FissionFragments::generateSingleFissionFragments(
     fissionFragmentType *lightFragment, fissionFragmentType *heavyFragment,
-    int ZAIDsf, const int numberEvents) {
+    int ZAIDsf, Yields *ffy) {
+  
+  // set light and heavy according to user options
+  const int Al = int(ZAIDsf / 1000);
+  const int Zl = ZAIDsf % 1000;
+  const int Ah = Ac - Al;
+  const int Zh = Zc - Zl;
+  
+  // Fragment properties
+  double TKE;
+  double maxYz;
+  double KEl, KEh;
+  int j;
+  
+  int iZmin, iZmax;
+  iZmin = -dZ;
+  iZmax = dZ;
 
-  int Zf = int(ZAIDsf / 1000);
-  int Af = ZAIDsf % 1000;
+  // Excitation energies, spins, and parities
+  double Ul, Uh;
+  double spinl, spinh;
+  int parl, parh;
 
-  for (int i = 0; i < numberEvents; i++) {
-    lightFragment[i].A = Af;
-    lightFragment[i].Z = Zf;
-    lightFragment[i].U = Eexc;
-    lightFragment[i].KE = 0.0;
-    lightFragment[i].spin = 0;
-    lightFragment[i].parity = 0;
-    heavyFragment[i].A = Af;
-    heavyFragment[i].Z = Zf;
-    heavyFragment[i].U = Eexc;
-    heavyFragment[i].KE = 0.0;
-    heavyFragment[i].spin = 0;
-    heavyFragment[i].parity = 0;
+  double y;  // Yield
+
+  double energyRelease; // Q-value for a given fragment pair
+
+  auto momentum = new double[3]; // (x,y,z) components of fragment momentum
+
+  int i = 0; // Counter for the number of (A,TKE) sampling attempts
+  
+  // Sample the TKE value
+  do {
+    // Sample the TKE value from a Gaussian with mean <TKE>(Ah) and
+    // width s_TKE(Ah) Compute the excitation energy sharing and the
+    // spin/parity assignment
+    TKE = ffy->sampleTKE(Ah); 
+    computeFragmentInitialConditions(
+        TKE, Zl, Al, Zh, Ah, &Ul, &Uh, &spinl, &spinh, &parl, &parh,
+        &energyRelease, lightFragment->preMomentum, heavyFragment->preMomentum);
+  } while (Ul == 0. &&
+           Uh == 0.); // Keep sampling until neither excitation energy is 0
+  
+  // Compute the excitation energy sharing and the spin/parity assignment
+  computeFragmentInitialConditions(
+      TKE, Zl, Al, Zh, Ah, &Ul, &Uh, &spinl, &spinh, &parl, &parh,
+      &energyRelease, lightFragment->preMomentum, heavyFragment->preMomentum);
+
+  for (unsigned int i = 0; i < 3; i++) { // Initialize for now
+    lightFragment->postMomentum[i] = lightFragment->preMomentum[i];
+    heavyFragment->postMomentum[i] = heavyFragment->preMomentum[i];
   }
+
+  // ground-state masses of the fragments << PT >>
+  double Ml = Al * amuMeV + getMassExcess(1000 * Zl + Al);
+  double Mh = Ah * amuMeV + getMassExcess(1000 * Zh + Ah);
+  lightFragment->mass = Ml;
+  heavyFragment->mass = Mh;
+
+  // Fission fragment kinetic energy is TKE*m_i/(m_1+m_2)
+  KEl = TKE * Mh / (Ml + Mh);
+  KEh = TKE * Ml / (Ml + Mh);
+
+  // Store the sampled event
+  lightFragment->A = Al;
+  lightFragment->Z = Zl;
+  lightFragment->N = Al - Zl;
+  lightFragment->U = Ul;
+  lightFragment->spin = spinl;
+  lightFragment->parity = parl;
+  lightFragment->KE = KEl;
+  lightFragment->TKE = TKE;
+  lightFragment->energyRelease = energyRelease;
+
+  heavyFragment->A = Ah;
+  heavyFragment->Z = Zh;
+  heavyFragment->N = Ah - Zh;
+  heavyFragment->U = Uh;
+  heavyFragment->spin = spinh;
+  heavyFragment->parity = parh;
+  heavyFragment->KE = KEh;
+  heavyFragment->TKE = TKE;
+  heavyFragment->energyRelease = energyRelease;
+
+  delete[] momentum;
+
+  return;
+}
+
+/*******************************************************************************
+ * generateSingleFissionFragments
+ *------------------------------------------------------------------------------
+ * Used for studying the decay for a specific fragment (ZAIDsf), with U, spin, parity
+ * sampled from Y(U,spin,parity|A,Z)
+ *
+ * Assumes YA, YATKE, maxYieldTKEGivenA have been computed
+* TODO assume YATKE and YA are normalized
+ ******************************************************************************/
+void FissionFragments::generateSingleFissionFragments(
+    fissionFragmentType *lightFragment, fissionFragmentType *heavyFragment,
+    int ZAIDsf) {
+  
+  // set light and heavy according to user options
+  const int Al = int(ZAIDsf / 1000);
+  const int Zl = ZAIDsf % 1000;
+  const int Ah = Ac - Al;
+  const int Zh = Zc - Zl;
+  
+  // Fragment properties
+  double TKE;
+  double maxYz;
+  double KEl, KEh;
+  int j;
+  
+  int iZmin, iZmax;
+  iZmin = -dZ;
+  iZmax = dZ;
+
+  // Excitation energies, spins, and parities
+  double Ul, Uh;
+  double spinl, spinh;
+  int parl, parh;
+
+  double y;  // Yield
+
+  double energyRelease; // Q-value for a given fragment pair
+
+  auto momentum = new double[3]; // (x,y,z) components of fragment momentum
+
+  int i = 0; // Counter for the number of (A,TKE) sampling attempts
+  
+  // indices into yeild pdfs
+  const int iA = int(floor(Al));
+  int iTKE = 0;
+
+  double cdfTKE = 0;
+  double xi = rng_cgm();
+
+  // calculate CDF and sample on the fly
+  for (; iTKE < NUMTKE; ++iTKE) {
+    cdfTKE += YATKE[iA][iTKE] / YA[iA];
+    if (cdfTKE > xi) break;
+  }
+
+  TKE = TKEmin + ((double)iTKE/(double)NUMTKE) * (TKEmax - TKEmin);
+  
+  // Compute the excitation energy sharing and the spin/parity assignment
+  computeFragmentInitialConditions(
+      TKE, Zl, Al, Zh, Ah, &Ul, &Uh, &spinl, &spinh, &parl, &parh,
+      &energyRelease, lightFragment->preMomentum, heavyFragment->preMomentum);
+
+  for (unsigned int i = 0; i < 3; i++) { // Initialize for now
+    lightFragment->postMomentum[i] = lightFragment->preMomentum[i];
+    heavyFragment->postMomentum[i] = heavyFragment->preMomentum[i];
+  }
+
+  // ground-state masses of the fragments << PT >>
+  double Ml = Al * amuMeV + getMassExcess(1000 * Zl + Al);
+  double Mh = Ah * amuMeV + getMassExcess(1000 * Zh + Ah);
+  lightFragment->mass = Ml;
+  heavyFragment->mass = Mh;
+
+  // Fission fragment kinetic energy is TKE*m_i/(m_1+m_2)
+  KEl = TKE * Mh / (Ml + Mh);
+  KEh = TKE * Ml / (Ml + Mh);
+
+  // Store the sampled event
+  lightFragment->A = Al;
+  lightFragment->Z = Zl;
+  lightFragment->N = Al - Zl;
+  lightFragment->U = Ul;
+  lightFragment->spin = spinl;
+  lightFragment->parity = parl;
+  lightFragment->KE = KEl;
+  lightFragment->TKE = TKE;
+  lightFragment->energyRelease = energyRelease;
+
+  heavyFragment->A = Ah;
+  heavyFragment->Z = Zh;
+  heavyFragment->N = Ah - Zh;
+  heavyFragment->U = Uh;
+  heavyFragment->spin = spinh;
+  heavyFragment->parity = parh;
+  heavyFragment->KE = KEh;
+  heavyFragment->TKE = TKE;
+  heavyFragment->energyRelease = energyRelease;
+
+  delete[] momentum;
+
   return;
 }
 
@@ -1369,7 +1547,6 @@ void FissionFragments::sampleFissionFragments(
 
   // TODO: CAREFUL WE CAN SAMPLE AN A<ASYM AND A Z>ZSYM, SO WHICH FRAGMENT IS
   // THIS? (P.J.)
-  // -----------------------------------------------------------------------------------------------------------------------------
   // Check if we've sampled a light or heavy fragment
   if (iA <= Ac / 2) {
     Al = iA;
@@ -2587,15 +2764,22 @@ void FissionFragments::buildYields(void) {
   // Find maximum Y(Z|A) for each A -- for sampling
   for (i = 0; i < NUMA; i++) {
     maxYieldZ[i] = 0.0;
+    maxYieldTKEGivenA[i] = 0;
     for (j = 0; j < NUMZ; j++) {
       if (YZA2[j][i] > maxYieldZ[i]) {
         maxYieldZ[i] = YZA2[j][i];
       }
     }
+    // determine max of Y(TKE|A) 
+    for (int k = 0; k < NUMTKE; k++) {
+      if ( YATKE[i][k] > maxYieldTKEGivenA[i] )
+        maxYieldTKEGivenA[i] = YATKE[i][k];
+    }
   }
 
   // Find maximum Y(A,TKE) -- for sampling
-  maxYieldATKE = 0.0;
+  // and Y(TKE|A)
+  maxYieldATKE      = 0.0;
   for (int i = Amin; i <= Amax; i++) {
     for (int j = TKEmin; j <= TKEmax; j++) {
       if (YATKE[i][j] > maxYieldATKE) {

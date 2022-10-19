@@ -357,10 +357,10 @@ cgmfEvent::cgmfEvent() {
              cgmfEvent: derived class constructor, destructor & methods
  ************************************************************************************/
 cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
-                     int ZAID_sf)
+                     int ZAIDsf)
     : cgmEvent() {
 
-  bool sf = (ZAID_sf > 0);
+  bool sf = (ZAIDsf > 0);
 
   int nevents = 1;
 
@@ -373,8 +373,7 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
   neutronNu = 0;
   photonNu = 0;
 
-  if (not sf)
-    checkInput(isotope, eng);
+  checkInput(isotope, eng);
 
   // record incident energy and ZAID of target nucleus
   incidentEnergy = eng;
@@ -426,8 +425,10 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
       eventHF.preFragmentMomentum[i] = hf[0].preMomentum[i];
 
     specMCMainFission(&eventHF);
+    
   } else {
-    ff->generateInitialFissionFragmentHistories(lf, hf, nevents);
+    
+    ff->generateInitialFissionFragmentHistories(lf, hf, nevents, ZAIDsf);
 
     cout.precision(3);
     cout << std::fixed;
@@ -447,28 +448,25 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
 
     specMCMainFission(&eventLF);
 
-    //-- heavy fragment calc. --------------------------------------------------
-
-    eventHF.A = hf[0].A;
-    eventHF.Z = hf[0].Z;
-    eventHF.U = hf[0].U;
-    eventHF.spin = hf[0].spin;
-    eventHF.parity = hf[0].parity;
-    eventHF.KE = hf[0].KE;
+    // no mc for HF
+    eventHF.A = lf[0].A;
+    eventHF.Z = lf[0].Z;
+    eventHF.U = lf[0].U;
+    eventHF.spin = lf[0].spin;
+    eventHF.parity = lf[0].parity;
+    eventHF.KE = lf[0].KE;
     for (int i = 0; i < 3; i++)
-      eventHF.preFragmentMomentum[i] = hf[0].preMomentum[i];
-
-    specMCMainFission(&eventHF);
+      eventHF.preFragmentMomentum[i] = lf[0].preMomentum[i];
+    
   }
-
+  
   neutronNu = eventLF.nu + eventHF.nu;
   photonNu = eventLF.nug + eventHF.nug;
   preFissionNeutronNu = ff->Ac0 - ff->Ac;
 
   allocateMemory();
 
-  if (preFissionNeutronNu >
-      0) { // save the momenta of the pre-fission neutrons in the lab frame
+  if (preFissionNeutronNu > 0) { // save the momenta of the pre-fission neutrons in the lab frame
     for (int i = 0; i < preFissionNeutronNu; i++) {
       double vn2 = 0.;
       for (int k = 0; k < 3; k++)

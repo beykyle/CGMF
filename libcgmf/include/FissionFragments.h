@@ -137,16 +137,26 @@ public:
                                                int numberEvents);
   void generateInitialFissionFragmentHistories(fissionFragmentType *,
                                                fissionFragmentType *,
-                                               const int numberEvents);
+                                               const int numberEvents,
+                                               int ZAIDsf = -1);
+
   void generateSingleFissionFragments(fissionFragmentType *,
                                       fissionFragmentType *, int ZAIDf,
                                       double Eexc, int numberEvents);
+  
   void checkDistributions(string inputFilename, string outputFilename);
 
   void studyEnergySorting(void);
 
   void sortExcitationEnergy(double Utot, int Al, int Ah, double *Ul, double *Uh,
                             double RT); // for Carjan
+  
+  void generateSingleFissionFragments(fissionFragmentType *, 
+                                      fissionFragmentType *,
+                                      int ZAIDsf);
+  void generateSingleFissionFragments(fissionFragmentType *, 
+                                      fissionFragmentType *,
+                                      int ZAIDsf, Yields *ffy);
 
   int Amin, Amax;     // min and max of fragment mass
   int Zmin, Zmax;     // min and max of fragment charge
@@ -157,7 +167,7 @@ public:
   int ZAIDt;      // ZAID of target nucleus
   int Ac, Zc;     // mass and charge of compound (fissioning) nucleus
   int At, Zt;     // mass and charge of target nucleus
-  int Ap, Zp;     // mass and charge of projectile
+  int Ap, Zp;     // Yieldmass and charge of projectile
   int Asym, Zsym; // mass and charge of symmetric fragment
 
   int ZAIDc0, Ac0, Zc0; // Original (before any pre-fission neutron emission)
@@ -183,6 +193,7 @@ public:
 
   double maxYieldZ[NUMA];
   double maxYieldATKE;
+  double maxYieldTKEGivenA[NUMA];
 
   double maxYieldA; // << 1.0.6 >>
 
