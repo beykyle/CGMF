@@ -5,3 +5,6 @@ __pycache__
 build/*
 .cache/
 compile_commands.json
+tools/build/*
+tools/dist/*
+*.egg-info*
