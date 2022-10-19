@@ -1203,8 +1203,8 @@ void FissionFragments::generateSingleFissionFragments(
     int ZAIDsf, Yields *ffy) {
   
   // set light and heavy according to user options
-  const int Al = int(ZAIDsf / 1000);
-  const int Zl = ZAIDsf % 1000;
+  const int Zl = int(ZAIDsf / 1000);
+  const int Al = ZAIDsf % 1000;
   const int Ah = Ac - Al;
   const int Zh = Zc - Zl;
   

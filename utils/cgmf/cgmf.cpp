@@ -44,7 +44,7 @@ int startingEvent = 1;
 string outfilename = "";
 string omp_fname = "";
 bool sf = false;
-int ZAID_sf = 0;
+int ZAID_sf = -1;
 unsigned long long seed = 1357;
 double timeCoincidenceWindow = 1e-8;
 
@@ -437,7 +437,7 @@ void readUserInput(int argc, char *argv[], int ip) {
   int p;
 
   // read user input from command line
-  while ((p = getopt(argc, argv, "e:n:i:f:t:d:s:o:r:g")) != -1) {
+  while ((p = getopt(argc, argv, "e:n:i:f:t:d:s:o:r:g:")) != -1) {
     switch (p) {
     case 'e':
       incidentEnergy = atof(optarg);
@@ -466,10 +466,11 @@ void readUserInput(int argc, char *argv[], int ip) {
     case 'r':
       seed = stoull(optarg);
       break;
-    case 'g':
+    case 'g': {
       sf = true;
       ZAID_sf = atoi(optarg);
       break;
+    }
     default:
       break;
     }
