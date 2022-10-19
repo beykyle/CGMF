@@ -98,7 +98,9 @@ int main(int argc, char *argv[]) {
       }
       set_rng(rng);
       yields = new cgmfYields (ZAIDt, incidentEnergy, -nevents, outfilename);
-      printf("\n/// CGMF-generated scission fragment yields Y(Z,A,KE,U,J,Pi,px,py,pz) saved in file %s ///\n", outfilename.c_str());
+      printf(
+          "\n/// CGMF-generated scission fragment yields Y(Z,A,KE,U,J,Pi,px,py,pz)"
+          " saved in file %s ///\n", outfilename.c_str());
     }
   } else {
     FILE *fp = fopen(&outfilename[0],"w");
@@ -121,11 +123,13 @@ int main(int argc, char *argv[]) {
         rng.set_seed(i+ip*nevents+startingEvent);
       }
       set_rng(rng);
-      if (nevents>=1000 and (i+1)%(nevents/100)==0 and ip==0) printf("%5.2f%%\n",float(i+1)/float(nevents)*100.0);
+      if (nevents>=1000 and (i+1)%(nevents/100)==0 and ip==0) 
+        printf("%5.2f%%\n",float(i+1)/float(nevents)*100.0);
       if (event != 0) delete event;
       if(sf and ip == 0) {
         printf("Running single fragment de-excitation for zaid=%d.\n"
-               "P(E*,J_0,TKE | A, Z) sampled as from fission on %d with incident energy %.3f \n", ZAID_sf, ZAIDt, incidentEnergy);
+               "P(E*,J_0,TKE | A, Z) sampled as from fission on %d with incident energy %.3f \n",
+               ZAID_sf, ZAIDt, incidentEnergy);
       }
       event = new cgmfEvent(ZAIDt, incidentEnergy, 0.0, timeCoincidenceWindow, ZAID_sf);
       recordEvent (event);
