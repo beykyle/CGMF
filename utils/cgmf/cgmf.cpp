@@ -115,6 +115,12 @@ int main(int argc, char *argv[]) {
       }
       setPdataOMP(omp_fname);
     }
+    if (sf and ip == 0) {
+      printf("Running single fragment de-excitation for zaid=%d.\n"
+             "P(E*,J_0,TKE | A, Z) sampled as from fission on %d with "
+             "incident energy %.3f \n",
+             ZAID_sf, ZAIDt, incidentEnergy);
+    }
     for (int i = 0; i < nevents; i++) {
       if (RANDOM_SEED_BY_TIME) {
         seed =
@@ -131,12 +137,6 @@ int main(int argc, char *argv[]) {
         printf("%5.2f%%\n", float(i + 1) / float(nevents) * 100.0);
       if (event != 0)
         delete event;
-      if (sf and ip == 0) {
-        printf("Running single fragment de-excitation for zaid=%d.\n"
-               "P(E*,J_0,TKE | A, Z) sampled as from fission on %d with "
-               "incident energy %.3f \n",
-               ZAID_sf, ZAIDt, incidentEnergy);
-      }
       event = new cgmfEvent(ZAIDt, incidentEnergy, 0.0, timeCoincidenceWindow,
                             ZAID_sf);
       recordEvent(event);
