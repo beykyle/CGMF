@@ -449,14 +449,14 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
     specMCMainFission(&eventLF);
 
     // no mc for HF
-    eventHF.A = lf[0].A;
-    eventHF.Z = lf[0].Z;
-    eventHF.U = lf[0].U;
-    eventHF.spin = lf[0].spin;
-    eventHF.parity = lf[0].parity;
-    eventHF.KE = lf[0].KE;
+    eventHF.A = hf[0].A;
+    eventHF.Z = hf[0].Z;
+    eventHF.U = hf[0].U;
+    eventHF.spin = hf[0].spin;
+    eventHF.parity = hf[0].parity;
+    eventHF.KE = hf[0].KE;
     for (int i = 0; i < 3; i++)
-      eventHF.preFragmentMomentum[i] = lf[0].preMomentum[i];
+      eventHF.preFragmentMomentum[i] = hf[0].preMomentum[i];
     
   }
   
