@@ -1,12 +1,13 @@
 # Shared or Static Library Build
 option(cgmf.shared_library
-  "Build cgmf as a shared library" ${BUILD_SHARED_LIBS})
+  "Build cgmf as a shared library" OFF)
 
 if(cgmf.shared_library)
   add_library(cgmf SHARED "")
 else()
   add_library(cgmf STATIC "")
 endif()
+
 
 target_include_directories(cgmf PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
@@ -39,7 +40,9 @@ if(cgmf.installation)
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/cgmf-${CGMF_VER}"
           FILES_MATCHING PATTERN "*.h"
   )
-  install(TARGETS cgmf EXPORT cgmf 
+  install(TARGETS cgmf EXPORT cgmf
           DESTINATION "${CMAKE_INSTALL_LIBDIR}/cgmf-${CGMF_VER}"
   )
 endif()
+
+target_link_libraries(cgmf PRIVATE nlohmann_json::nlohmann_json omplib)

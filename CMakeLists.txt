@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.16.2)
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Specifies the build type on single-configuration generators.")
+  set(CMAKE_BUILD_TYPE "Release"
+    CACHE STRING "Specifies the build type on single-configuration generators.")
 endif()
 
 if(DEFINED PROJECT_NAME)
@@ -22,11 +23,13 @@ set(CMAKE_CXX_STANDARD 14)
 
 include(CMakeDependentOption)
 include(GNUInstallDirs)
+include(FetchContent)
 
 CMAKE_DEPENDENT_OPTION(cgmf.installation
                        "Install CGMF (default is ON)" ON
                        "NOT SUBPROJECT" ${INSTALL_SUBPROJECTS}
 )
+
 mark_as_advanced(cgmf.installation)
 
 add_subdirectory(libcgmf)
@@ -48,3 +51,14 @@ if(cgmf.installation)
           FILES_MATCHING PATTERN "*.dat*"
   )
 endif()
+
+FetchContent_Declare(
+  omplib GIT_REPOSITORY git@github.com:beykyle/omplib.git
+  GIT_TAG "origin/main"
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  )
+FetchContent_Declare(
+  json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
+  DOWNLOAD_EXTRACT_TIMESTAMP true
+  )
+FetchContent_MakeAvailable(json omplib)
