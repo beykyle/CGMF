@@ -4,9 +4,12 @@ get_filename_component(util ${util_src} NAME_WE)
 
 add_executable(${util}.x ${util_src})
 set_target_properties(${util}.x PROPERTIES COMPILE_FLAGS "${CGMF_CXX_FLAGS}")
-set_target_properties(${util}.x PROPERTIES LINK_FLAGS "${CGMF_EXE_LINK_FLAGS}")
+#set_target_properties(${util}.x PROPERTIES LINK_FLAGS "${CGMF_EXE_LINK_FLAGS}")
 set_target_properties(${util}.x PROPERTIES COMPILE_DEFINITIONS "${CGMF_COMPILE_DEFS}")
-target_link_libraries(${util}.x cgmf)
+target_link_libraries(${util}.x PRIVATE
+  cgmf
+  omplib
+)
 
 # Serial or MPI Build
 option(${util}.x.MPI "Build CGMF executable with MPI parallelism" ${MPI})
