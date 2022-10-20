@@ -102,6 +102,9 @@ Options:
 	-t $timeCoinc		[optional]	time coincidence window for long-lived isomer gamma-ray emission cutoff (in sec)
 	-d $datapath		[optional]	overrides the environment variable CGMFDATA and default datapath
 	-o $omppath		[optional]	use custom Koning-Delaroche global OM params, formatted in json at given path
+	-r $seed                [optional]      use custom RNG seed (Note: RANDOM_SEED_BY_ARG must be set to true in config.h)
+	-g $ZAIDsf              [optional]      Only de-excites fragments correspinding to ZAIDsf, with excitation energy, spin, parity, and TKE
+	                                        all sampled as if that fragment was produced by the fissioning nucleus
 
 
 ---
