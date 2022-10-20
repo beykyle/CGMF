@@ -32,7 +32,7 @@ using namespace std;
 #include "terminate.h"
 
 #ifdef __cplusplus
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 using nlohmann::json;
 #endif
 
