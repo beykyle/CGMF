@@ -13,7 +13,6 @@ else()
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
-file(COPY json/single_include/nlohmann/json.hpp DESTINATION ../libcgmf/include)
 file(STRINGS VERSION CGMF_VER)
 set(cgmf_version ${CGMF_VER} CACHE STRING "CGMF Library Version")
 
