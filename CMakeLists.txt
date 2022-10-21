@@ -19,7 +19,7 @@ set(cgmf_version ${CGMF_VER} CACHE STRING "CGMF Library Version")
 
 project(cgmf VERSION ${CGMF_VER} LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 include(CMakeDependentOption)
 include(GNUInstallDirs)
