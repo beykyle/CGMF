@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -73,34 +74,34 @@ unsigned int omSetOmp(double e, ZAnumber *target, Pdata *proj, Optical *omp) {
   double a3 = pow((double)a0, 1.0 / 3.0);
 
   if (auto omp_file = proj->omp_file) {
-    // assert(potfm>>8 == 6);
+    
+    //  set potfm
     potfm = 6 << 8;
     potfm = omp_library(potfm >> 8, z0, a0, z1, a1, e, omp);
-    //  Energy dependent depths
-    omp->volume.real = omp_file->real_central_depth(z0, a0, e);
-    omp->volume.imag = omp_file->cmpl_central_depth(z0, a0, e);
-    omp->surface.real = omp_file->real_surf_depth(z0, a0, e);
-    ;
-    omp->surface.imag = omp_file->cmpl_surf_depth(z0, a0, e);
-    omp->spin_orbit.real = omp_file->real_so_depth(z0, a0, e);
-    omp->spin_orbit.imag = omp_file->cmpl_so_depth(z0, a0, e);
+    
+    omp->volume.real = omp_file->real_cent_V(z0,a0,e);
+    omp->volume.imag = omp_file->cmpl_cent_V(z0, a0, e);
+    omp->surface.real = omp_file->real_surf_V(z0, a0, e);
+    omp->surface.imag = omp_file->cmpl_surf_V(z0, a0, e);
+    omp->spin_orbit.real = omp_file->real_spin_V(z0, a0, e);
+    omp->spin_orbit.imag = omp_file->cmpl_spin_V(z0, a0, e);
 
     // diffusivities
-    omp->a0 = omp_file->real_central_diffusivity(z0, a0, e);
-    omp->av = omp_file->cmpl_central_diffusivity(z0, a0, e);
-    omp->a0s = omp_file->real_surf_diffusivity(z0, a0, e);
-    omp->as = omp_file->cmpl_surf_diffusivity(z0, a0, e);
-    omp->avso = omp_file->real_so_diffusivity(z0, a0, e);
-    omp->awso = omp_file->cmpl_so_diffusivity(z0, a0, e);
+    omp->a0 = omp_file->real_cent_a(z0, a0, e);
+    omp->av = omp_file->cmpl_cent_a(z0, a0, e);
+    omp->a0s = omp_file->real_surf_a(z0, a0, e);
+    omp->as = omp_file->cmpl_surf_a(z0, a0, e);
+    omp->avso = omp_file->real_spin_a(z0, a0, e);
+    omp->awso = omp_file->cmpl_spin_a(z0, a0, e);
 
-    //  Reduced potential radii
-    omp->R0 = omp_file->real_central_radius(z0, a0, e) * a3;
-    omp->Rv = omp_file->cmpl_central_radius(z0, a0, e) * a3;
-    omp->R0s = omp_file->real_surf_radius(z0, a0, e) * a3;
-    omp->Rs = omp_file->cmpl_surf_radius(z0, a0, e) * a3;
-    omp->Rvso = omp_file->real_so_radius(z0, a0, e) * a3;
-    omp->Rwso = omp_file->cmpl_so_radius(z0, a0, e) * a3;
-    omp->Rc = 0;
+    // regular potential radia 
+    omp->r0 = omp_file->real_cent_r(z0, a0, e);
+    omp->rv = omp_file->cmpl_cent_r(z0, a0, e);
+    omp->r0s = omp_file->real_surf_r(z0, a0, e);
+    omp->rs = omp_file->cmpl_surf_r(z0, a0, e);
+    omp->rvso = omp_file->real_spin_r(z0, a0, e);
+    omp->rwso = omp_file->cmpl_spin_r(z0, a0, e);
+    omp->rc = 0;
 
   } else {
     //  Retrieve potential parameters from library
@@ -113,15 +114,16 @@ unsigned int omSetOmp(double e, ZAnumber *target, Pdata *proj, Optical *omp) {
     omp->surface.imag = omp->ws1 + omp->ws2 * e + omp->ws3 * e * e;
     omp->spin_orbit.real = omp->vso1 + omp->vso2 * e + omp->vso3 * e * e;
     omp->spin_orbit.imag = omp->wso1 + omp->wso2 * e + omp->wso3 * e * e;
-
-    omp->R0 = omp->r0 * a3;
-    omp->R0s = omp->r0s * a3;
-    omp->Rv = omp->rv * a3;
-    omp->Rs = omp->rs * a3;
-    omp->Rvso = omp->rvso * a3;
-    omp->Rwso = omp->rwso * a3;
-    omp->Rc = omp->rc * a3;
   }
+  
+  // reduced potential radii
+  omp->R0 = omp->r0 * a3;
+  omp->R0s = omp->r0s * a3;
+  omp->Rv = omp->rv * a3;
+  omp->Rs = omp->rs * a3;
+  omp->Rvso = omp->rvso * a3;
+  omp->Rwso = omp->rwso * a3;
+  omp->Rc = omp->rc * a3;
 
   if (omp->volume.real <= 0.0) {
     potfm = (potfm & 0x009f);

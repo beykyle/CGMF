@@ -20,6 +20,7 @@
 
 using namespace std;
 
+#include "ompNeutron.hpp"
 #include "FissionFragments.h"
 #include "cgm.h"
 #include "config.h"
@@ -78,7 +79,7 @@ void setPdataOMP(string fname) {
   std::ifstream i(fname);
   json j;
   i >> j;
-  pdt[neutron].omp_file = new GKDNeutron(j);
+  pdt[neutron].omp_file = new omplib::KoningDelaroche03<n>(j);
   pdt[gammaray].omp_file = nullptr;
 }
 
