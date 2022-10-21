@@ -1,7 +1,9 @@
 CGMF, Cascading Gamma-ray Multiplicity and Fission
 ==================================================
 
-This is a modified version of CGMF for use in uncertainty quantification. Includes [nlohmann/json](https://github.com/nlohmann/json) as a git submodule to handle json parsing. 
+This is a modified version of CGMF for use in uncertainty quantification. Includes the following dependencies which are automatically downloaded and installed by the build system:
+- [nlohmann/json](https://github.com/nlohmann/json) for parsing json formatted parameter files
+- [beykyle/omplib](https://github.com/beykyle/omplib) a library of optical model potentials
 
 ---
 Authors
