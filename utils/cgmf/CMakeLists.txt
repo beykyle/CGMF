@@ -14,10 +14,12 @@ if(${util}.x.MPI)
   find_package(MPI REQUIRED)
   include_directories(${MPI_INCLUDE_PATH})
   target_compile_definitions(${util}.x PUBLIC MPIRUN)
-  target_link_libraries(${util}.x ${MPI_CXX_LIBRARIES})
-  set_target_properties(${util}.x PROPERTIES OUTPUT_NAME ${util}.mpi.x cgmf omplib)
+  target_link_libraries(${util}.x
+      ${MPI_CXX_LIBRARIES} cgmf omplib nlohmann_json::nlohmann_json)
+  set_target_properties(${util}.x PROPERTIES OUTPUT_NAME ${util}.mpi.x )
 else()
-  target_link_libraries(${util}.x PRIVATE cgmf omplib)
+  target_link_libraries(${util}.x PRIVATE
+      cgmf omplib nlohmann_json::nlohmann_json)
 endif()
 
 if(cgmf.tests)
