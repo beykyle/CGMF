@@ -6,11 +6,6 @@ add_executable(${util}.x ${util_src})
 set_target_properties(${util}.x PROPERTIES COMPILE_FLAGS "${CGMF_CXX_FLAGS}")
 #set_target_properties(${util}.x PROPERTIES LINK_FLAGS "${CGMF_EXE_LINK_FLAGS}")
 set_target_properties(${util}.x PROPERTIES COMPILE_DEFINITIONS "${CGMF_COMPILE_DEFS}")
-target_link_libraries(${util}.x PRIVATE
-  cgmf
-  omplib
-)
-
 # Serial or MPI Build
 option(${util}.x.MPI "Build CGMF executable with MPI parallelism" ${MPI})
 if(${util}.x.MPI)
@@ -18,8 +13,10 @@ if(${util}.x.MPI)
   find_package(MPI REQUIRED)
   include_directories(${MPI_INCLUDE_PATH})
   target_compile_definitions(${util}.x PUBLIC MPIRUN)
-  target_link_libraries(${util}.x ${MPI_CXX_LIBRARIES})
+  target_link_libraries(${util}.x nlohmann_json::nlohmann_json cgmf omplib ${MPI_CXX_LIBRARIES} )
   set_target_properties(${util}.x PROPERTIES OUTPUT_NAME ${util}.mpi.x)
+else()
+  target_link_libraries(${util}.x PRIVATE cgmf omplib )
 endif()
 
 if(cgmf.tests)
