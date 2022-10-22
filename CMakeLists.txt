@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.2)
+cmake_minimum_required(VERSION 3.22)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release"
@@ -55,10 +55,8 @@ endif()
 FetchContent_Declare(
   omplib GIT_REPOSITORY git@github.com:beykyle/omplib.git
   GIT_TAG "origin/main"
-  DOWNLOAD_EXTRACT_TIMESTAMP true
   )
 FetchContent_Declare(
   json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
-  DOWNLOAD_EXTRACT_TIMESTAMP true
   )
 FetchContent_MakeAvailable(json omplib)
