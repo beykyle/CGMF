@@ -56,7 +56,9 @@ FetchContent_Declare(
   omplib GIT_REPOSITORY git@github.com:beykyle/omplib.git
   GIT_TAG "origin/main"
   )
+message("Fetching beykyle/omplib")
 FetchContent_Declare(
   json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
   )
+message("Fetching nlohmann/json")
 FetchContent_MakeAvailable(json omplib)
