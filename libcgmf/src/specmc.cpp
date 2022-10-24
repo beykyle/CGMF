@@ -76,10 +76,28 @@ void set_time_coincidence_window(double timew) {
 double gammaTimeStamp[MAX_NUMBER_GAMMAS];
 
 void setPdataOMP(string fname) {
-  std::ifstream i(fname);
-  json j;
-  i >> j;
-  pdt[neutron].omp_file = new omplib::KoningDelaroche03<n>(j);
+  if ( fname.find("KD") != string::npos) {
+    std::ifstream i(fname);
+    json j;
+    i >> j;
+    pdt[neutron].omp_file = new omplib::KoningDelaroche03<n>(j);
+  }
+  else if ( fname.find("CH") != string::npos) {
+    std::ifstream i(fname);
+    json j;
+    i >> j;
+    pdt[neutron].omp_file = new omplib::ChapelHill89<n>(j);
+  }
+  else if ( fname.find("WLH") != string::npos) {
+    std::ifstream i(fname);
+    json j;
+    i >> j;
+    //TODO
+    //pdt[neutron].omp_file = new omplib::WLH21<n>(j);
+  }
+  else {
+    cgmTerminateCode("Unrecognized OMP file type " + fname);
+  }
   pdt[gammaray].omp_file = nullptr;
 }
 
