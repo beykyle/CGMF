@@ -83,18 +83,28 @@ void setPdataOMP(string fname, int ip) {
   int start = fname.rfind("/");
   if (start == string::npos) start = 0;
 
+  auto print_if_rank0 = [&ip,&fname](string OM_name) {
+    if (ip ==0) {
+      printf(
+          string{"Reading "} + OM_name + " + parameters from " + fname);
+    }
+  };
+
   if ( fname.find("KD",start) != string::npos
       or fname.find("kd",start) != string::npos) {
+    print_if_rank0("KoningDelaroche03")
     pdt[neutron].omp_file = new omplib::KoningDelaroche03<n>(j);
     pdt[neutron].omp = 6 << 8;
   }
   else if ( fname.find("CH", start) != string::npos
       or fname.find("ch", start) != string::npos) {
+    print_if_rank0("ChapelHill89")
     pdt[neutron].omp_file = new omplib::ChapelHill89<n>(j);
     pdt[neutron].omp = 5 << 8;
   }
   else if ( fname.find("WLH", start) != string::npos
       or fname.find("wlh", start) != string::npos) {
+    print_if_rank0("WLH21")
     pdt[neutron].omp_file = new omplib::WLH21<n>(j);
     pdt[neutron].omp = 6 << 8;
   }
