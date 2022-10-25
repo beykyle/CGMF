@@ -309,7 +309,7 @@ void specCompoundDecay(int c0, int k0, Transmission *tc, Transmission *td,
     }
   }
 
-  /*** Loop over CN J and Pariry */
+  /*** Loop over CN J and Parity */
   for (int j0 = i0; j0 < MAX_J * 2 + i0; j0 += 2) {
     int jdx = (j0 - i0) / 2;
     for (int p0 = -1; p0 <= 1; p0 += 2) {

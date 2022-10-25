@@ -189,6 +189,7 @@ cgmEvent::cgmEvent(int isotope, double eng, double time) {
 
 cgmEvent::~cgmEvent() {
   if (neutronNu > 0) {
+    delete[] neutronDeltaJ;
     delete[] neutronEnergies;
     delete[] neutronDircosu;
     delete[] neutronDircosv;
@@ -264,6 +265,7 @@ void cgmEvent::outputOptions(unsigned int p) {
 /**********************************************************/
 void cgmEvent::allocateMemory() {
   if (neutronNu > 0) {
+    neutronDeltaJ   = new double[neutronNu];
     neutronEnergies = new double[neutronNu];
     neutronDircosu = new double[neutronNu];
     neutronDircosv = new double[neutronNu];
@@ -286,6 +288,7 @@ void cgmEvent::allocateMemory() {
 void cgmfEvent::allocateMemory() {
 
   if (neutronNu > 0) {
+    neutronDeltaJ   = new double[neutronNu];
     neutronEnergies = new double[neutronNu];
     neutronDircosu = new double[neutronNu];
     neutronDircosv = new double[neutronNu];
@@ -485,11 +488,12 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
   if (neutronNu > 0) {
 
     for (int i = 0; i < eventLF.nu; i++) {
+      neutronDeltaJ[i]   = eventLF.neutronDeltaJ[i];
       neutronEnergies[i] = eventLF.neutronEnergies[i];
-      neutronDircosu[i] = eventLF.neutronDircosu[i];
-      neutronDircosv[i] = eventLF.neutronDircosv[i];
-      neutronDircosw[i] = eventLF.neutronDircosw[i];
-      neutronAges[i] = 0.0;
+      neutronDircosu[i]  = eventLF.neutronDircosu[i];
+      neutronDircosv[i]  = eventLF.neutronDircosv[i];
+      neutronDircosw[i]  = eventLF.neutronDircosw[i];
+      neutronAges[i]     = 0.0;
 
       cmNeutronEnergies[i] = eventLF.cmNeutronEnergies[i];
       cmNeutronDircosu[i] = eventLF.cmNeutronDircosu[i];
@@ -499,6 +503,7 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
 
     for (int i = 0; i < eventHF.nu; i++) {
       ii = i + eventLF.nu;
+      neutronDeltaJ[ii]   = eventLF.neutronDeltaJ[i];
       neutronEnergies[ii] = eventHF.neutronEnergies[i];
       neutronDircosu[ii] = eventHF.neutronDircosu[i];
       neutronDircosv[ii] = eventHF.neutronDircosv[i];

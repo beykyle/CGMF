@@ -68,27 +68,28 @@ struct fissionEventType {
 
   int nu = 0; // number of neutrons
   double neutronEnergies[MAX_NUMBER_NEUTRONS] = {};
-  double neutronDircosu[MAX_NUMBER_NEUTRONS] = {};
-  double neutronDircosv[MAX_NUMBER_NEUTRONS] = {};
-  double neutronDircosw[MAX_NUMBER_NEUTRONS] = {};
-  double neutronAges[MAX_NUMBER_NEUTRONS] = {};
+  double neutronDircosu[MAX_NUMBER_NEUTRONS]  = {};
+  double neutronDircosv[MAX_NUMBER_NEUTRONS]  = {};
+  double neutronDircosw[MAX_NUMBER_NEUTRONS]  = {};
+  double neutronAges[MAX_NUMBER_NEUTRONS]     = {};
 
+  double neutronDeltaJ[MAX_NUMBER_NEUTRONS]     = {};
   double cmNeutronEnergies[MAX_NUMBER_NEUTRONS] = {};
-  double cmNeutronDircosu[MAX_NUMBER_NEUTRONS] = {};
-  double cmNeutronDircosv[MAX_NUMBER_NEUTRONS] = {};
-  double cmNeutronDircosw[MAX_NUMBER_NEUTRONS] = {};
+  double cmNeutronDircosu[MAX_NUMBER_NEUTRONS]  = {};
+  double cmNeutronDircosv[MAX_NUMBER_NEUTRONS]  = {};
+  double cmNeutronDircosw[MAX_NUMBER_NEUTRONS]  = {};
 
   int nug = 0; // number of photons
   double photonEnergies[MAX_NUMBER_GAMMAS] = {};
-  double photonDircosu[MAX_NUMBER_GAMMAS] = {};
-  double photonDircosv[MAX_NUMBER_GAMMAS] = {};
-  double photonDircosw[MAX_NUMBER_GAMMAS] = {};
-  double photonAges[MAX_NUMBER_GAMMAS] = {};
+  double photonDircosu[MAX_NUMBER_GAMMAS]  = {};
+  double photonDircosv[MAX_NUMBER_GAMMAS]  = {};
+  double photonDircosw[MAX_NUMBER_GAMMAS]  = {};
+  double photonAges[MAX_NUMBER_GAMMAS]     = {};
 
   double cmPhotonEnergies[MAX_NUMBER_GAMMAS] = {};
-  double cmPhotonDircosu[MAX_NUMBER_GAMMAS] = {};
-  double cmPhotonDircosv[MAX_NUMBER_GAMMAS] = {};
-  double cmPhotonDircosw[MAX_NUMBER_GAMMAS] = {};
+  double cmPhotonDircosu[MAX_NUMBER_GAMMAS]  = {};
+  double cmPhotonDircosv[MAX_NUMBER_GAMMAS]  = {};
+  double cmPhotonDircosw[MAX_NUMBER_GAMMAS]  = {};
 
   int npfn = 0; // number of pre-fission neutrons
 

@@ -935,10 +935,19 @@ void recordEmittedParticles(void) {
   int gammaTypes[MAX_NUMBER_PARTICLES];
   double icEnergies[MAX_NUMBER_PARTICLES];
 
+  double neutronInitialSpins[MAX_NUMBER_NEUTRONS];
+  double neutronFinalSpins[MAX_NUMBER_NEUTRONS];
+  double photonInitialSpins[MAX_NUMBER_GAMMAS];
+  double photonFinalSpins[MAX_NUMBER_GAMMAS];
+
   int neutronMultiplicity = 0;
   int gammaMultiplicity = 0;
   int icMultiplicity = 0;
 
+  std::fill_n (neutronInitialSpins, MAX_NUMBER_NEUTRONS, 0.0);
+  std::fill_n (photonInitialSpins, MAX_NUMBER_GAMMAS, 0.0);
+  std::fill_n (neutronFinalSpins, MAX_NUMBER_NEUTRONS, 0.0);
+  std::fill_n (photonFinalSpins, MAX_NUMBER_GAMMAS, 0.0);
   std::fill_n(neutronEnergies, MAX_NUMBER_PARTICLES, 0.0);
   std::fill_n(gammaEnergies, MAX_NUMBER_PARTICLES, 0.0);
 
@@ -951,7 +960,7 @@ void recordEmittedParticles(void) {
     oddSpin = 0.5;
   }
 
-  float Ji = mp0.getJ() + oddSpin; // retrieve initial spin index
+  float JI = mp0.getJ() + oddSpin; // retrieve initial spin index
   int Pi = mp0.getP();             // retrieve initial parity index
   double Ui = mp0.getE();          // retrieve initial excitation energy
 
@@ -959,6 +968,7 @@ void recordEmittedParticles(void) {
     index = hs[i].getIndex();
     mc_curr = hs[i].getMCPoint();
     mc_next = hs[i + 1].getMCPoint();
+
     if (index == 1) { // neutrons
       neutronEnergies[neutronMultiplicity++] = hs[i].getEnergy();
     } else if (index == 0) {             // gammas (no IC)
@@ -989,11 +999,22 @@ void recordEmittedParticlesFission(fissionEventType *fe) {
   double gammaEnergies[MAX_NUMBER_GAMMAS];
   double timeStamp[MAX_NUMBER_GAMMAS];
   double icEnergies[MAX_NUMBER_PARTICLES];
+  
+  double neutronInitialSpins[MAX_NUMBER_NEUTRONS];
+  double neutronFinalSpins[MAX_NUMBER_NEUTRONS];
+  double photonInitialSpins[MAX_NUMBER_GAMMAS];
+  double photonFinalSpins[MAX_NUMBER_GAMMAS];
+
+
 
   int neutronMultiplicity = 0;
   int gammaMultiplicity = 0;
   int icMultiplicity = 0;
 
+  std::fill_n (neutronInitialSpins, MAX_NUMBER_NEUTRONS, 0.0);
+  std::fill_n (photonInitialSpins, MAX_NUMBER_GAMMAS, 0.0);
+  std::fill_n (neutronFinalSpins, MAX_NUMBER_NEUTRONS, 0.0);
+  std::fill_n (photonFinalSpins, MAX_NUMBER_GAMMAS, 0.0);
   std::fill_n(neutronEnergies, MAX_NUMBER_NEUTRONS, 0.0);
   std::fill_n(gammaEnergies, MAX_NUMBER_GAMMAS, 0.0);
   std::fill_n(timeStamp, MAX_NUMBER_GAMMAS, 0.0);
@@ -1006,25 +1027,45 @@ void recordEmittedParticlesFission(fissionEventType *fe) {
   int A = ncl[mp0.getN()].za.getA();
   int Z = ncl[mp0.getN()].za.getZ();
 
-  float oddSpin = 0.0;
-  if (A % 2) {
-    oddSpin = 0.5;
-  }
+  int oddSpin=0; if (A%2) { oddSpin=1; }
+
+  float JI = mp0.getJ() + oddSpin/2.; // retrieve initial spin index
 
   for (int i = 0; i < np - 1; i++) { // loop over emitted particles
+    
     index = hs[i].getIndex();
     mc_curr = hs[i].getMCPoint();
     mc_next = hs[i + 1].getMCPoint();
+    
+    // find the spin of the emitting level
+    JI = mc_curr.getJ() + oddSpin/2.;
+    
     if (index == 1) { // neutrons
+    
+      // A -> A-1
+      if(oddSpin==1) oddSpin=0;
+      else oddSpin=1;
+    
+      neutronInitialSpins[neutronMultiplicity] = JI;
+      neutronFinalSpins[neutronMultiplicity] = mc_next.getJ() + oddSpin/2.;
       cmNeutronEnergies[neutronMultiplicity++] = hs[i].getEnergy();
+      
+
     } else if (index == 0) { // gammas (no IC)
+      
       if (mc_curr.ifDiscrete()) {
         timeStamp[gammaMultiplicity] =
             gammaTimeStamp[i]; // discrete-to-discrete
       }
+      
+      photonInitialSpins[gammaMultiplicity] = JI;
+      photonFinalSpins[gammaMultiplicity] = mc_next.getJ() + oddSpin/2.;
       cmGammaEnergies[gammaMultiplicity++] = hs[i].getEnergy();
+
     } else { // Internal Conversion
+      
       icEnergies[icMultiplicity++] = hs[i].getEnergy();
+    
     }
   }
 
@@ -1062,6 +1103,7 @@ void recordEmittedParticlesFission(fissionEventType *fe) {
   
   fe->KEpost /= (2.0 * mass);
 
+  // set neutron data in fission event
   for (int i = 0; i < fe->nu; i++) {
     fe->neutronEnergies[i] = neutronEnergies[i];
     vx = Vn[i][0];
@@ -1080,8 +1122,11 @@ void recordEmittedParticlesFission(fissionEventType *fe) {
     fe->cmNeutronDircosu[i] = vx / v;
     fe->cmNeutronDircosv[i] = vy / v;
     fe->cmNeutronDircosw[i] = vz / v;
+    fe->neutronDeltaJ[i] = neutronFinalSpins[i] - neutronInitialSpins[i];
   }
 
+  
+  // set gamma data in fission event
   int igc = 0; // count the continuum-to-continuum and continuum-to-discrete
                // transitions
   for (int i = 0; i < fe->nug; i++) {

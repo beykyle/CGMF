@@ -97,6 +97,12 @@ public:
     else
       return -1;
   }
+  double getCmNeutronDeltaJ(int index) {
+    if (index >= 0 && index < neutronNu)
+      return neutronDeltaJ[index];
+    else
+      return -1;
+  }
 
   // photons -------------------------------------------------------------------
   int getPhotonNu() { return photonNu; }
@@ -144,6 +150,7 @@ protected:
   double *cmNeutronDircosu;
   double *cmNeutronDircosv;
   double *cmNeutronDircosw;
+  double *neutronDeltaJ;
 
   int photonNu;
   double *photonEnergies;

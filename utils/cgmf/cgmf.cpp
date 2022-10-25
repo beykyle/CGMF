@@ -519,7 +519,7 @@ void printEventToFile(FILE *fp, cgmfEvent *event,
   double eng;              // energy
   double diru, dirv, dirw; // directional cosines
   double age;              // time of emission of a photon
-  int l;
+  double deltaJ;           // change in fragment spin in neutron emission
 
   // LIGHT FRAGMENT --------------------------
 
@@ -544,13 +544,13 @@ void printEventToFile(FILE *fp, cgmfEvent *event,
 
   // Center-of-Mass neutron (energy, directional cosines) from light fragment
   for (int n1 = 0; n1 < nul; n1++) {
-    l = 0; // TODO
+    deltaJ = event->getCmNeutronDeltaJ(n1);
     eng = event->getCmNeutronEnergy(n1);
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
-    if (PRINT_DELTA_L)
-      fprintf(fp, "%.3f %.3f %.3f %.3f %d ", diru, dirv, dirw, eng, l);
+    if (PRINT_DELTA_J)
+      fprintf(fp, "%.3f %.3f %.3f %.3f %.1f ", diru, dirv, dirw, eng, deltaJ);
     else
       fprintf(fp, "%.3f %.3f %.3f %.3f ", diru, dirv, dirw, eng);
   }
@@ -608,14 +608,14 @@ void printEventToFile(FILE *fp, cgmfEvent *event,
 
   // Center-of-Mass neutron (energy, directional cosines) from heavy fragment
   for (int n1 = nul; n1 < nul + nuh; n1++) {
-    l = 0; // TODO
+    deltaJ = 0; // TODO
     eng = event->getCmNeutronEnergy(n1);
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);
     dirw = event->getCmNeutronDircosw(n1);
 
-    if (PRINT_DELTA_L)
-      fprintf(fp, "%.3f %.3f %.3f %.3f %d ", diru, dirv, dirw, eng, l);
+    if (PRINT_DELTA_J)
+      fprintf(fp, "%.3f %.3f %.3f %.3f %.1f ", diru, dirv, dirw, eng, deltaJ);
     else
       fprintf(fp, "%.3f %.3f %.3f %.3f ", diru, dirv, dirw, eng);
   }
