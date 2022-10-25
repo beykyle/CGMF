@@ -116,7 +116,7 @@ public:
   OMPFile *omp_file;
 
   Pdata() {
-    omp = 0;
+    omp = 6 << 8;
     spin = 0.0;
     mass = 0.0;
     mass_excess = 0.0;

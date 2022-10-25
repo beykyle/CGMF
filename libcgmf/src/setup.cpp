@@ -56,7 +56,6 @@ void statSetupInitSystem(int nemit, Pdata *pdt) {
 
   pdt[neutron].particle.setZA(0, 1);
   pdt[neutron].particleID = neutron;
-  pdt[neutron].omp = 6 << 8; // Koning-Delaroche
   pdt[neutron].spin = 0.5;
   pdt[neutron].mass = NEUTRONMASS;
   pdt[neutron].mass_excess = ENEUTRON;

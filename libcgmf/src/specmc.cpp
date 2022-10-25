@@ -75,25 +75,28 @@ void set_time_coincidence_window(double timew) {
 
 double gammaTimeStamp[MAX_NUMBER_GAMMAS];
 
-void setPdataOMP(string fname) {
-  if ( fname.find("KD") != string::npos) {
-    std::ifstream i(fname);
-    json j;
-    i >> j;
+void setPdataOMP(string fname, int ip) {
+  std::ifstream i(fname);
+  json j;
+  i >> j;
+
+  int start = fname.rfind("/");
+  if (start == string::npos) start = 0;
+
+  if ( fname.find("KD",start) != string::npos
+      or fname.find("kd",start) != string::npos) {
     pdt[neutron].omp_file = new omplib::KoningDelaroche03<n>(j);
+    pdt[neutron].omp = 6 << 8;
   }
-  else if ( fname.find("CH") != string::npos) {
-    std::ifstream i(fname);
-    json j;
-    i >> j;
+  else if ( fname.find("CH", start) != string::npos
+      or fname.find("ch", start) != string::npos) {
     pdt[neutron].omp_file = new omplib::ChapelHill89<n>(j);
+    pdt[neutron].omp = 5 << 8;
   }
-  else if ( fname.find("WLH") != string::npos) {
-    std::ifstream i(fname);
-    json j;
-    i >> j;
-    //TODO
-    //pdt[neutron].omp_file = new omplib::WLH21<n>(j);
+  else if ( fname.find("WLH", start) != string::npos
+      or fname.find("wlh", start) != string::npos) {
+    pdt[neutron].omp_file = new omplib::WLH21<n>(j);
+    pdt[neutron].omp = 6 << 8;
   }
   else {
     cgmTerminateCode("Unrecognized OMP file type " + fname);

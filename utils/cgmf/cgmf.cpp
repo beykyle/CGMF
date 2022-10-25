@@ -109,21 +109,7 @@ int main(int argc, char *argv[]) {
       fprintf(fp, "# %5i %g %g\n", ZAIDt, incidentEnergy,
               timeCoincidenceWindow);
     if (!omp_fname.empty()) {
-      if (ip == 0) {
-        if ( omp_fname.find("KD") != string::npos) {
-          printf("Reading KoningDelaroche03 OM parameters from %s\n", omp_fname.c_str());
-        }
-        else if ( omp_fname.find("CH") != string::npos) {
-          printf("Reading ChapelHill89 OM parameters from %s\n", omp_fname.c_str());
-        }
-        else if ( omp_fname.find("WLH") != string::npos) {
-          printf("Reading WLH21 parameters from %s\n", omp_fname.c_str());
-        }
-        else {
-          std::cerr << "Unrecognized OMP file type " + omp_fname + "\n";
-        }
-      }
-      setPdataOMP(omp_fname);
+      setPdataOMP(omp_fname, ip);
     }
     if (sf and ip == 0) {
       printf("Running single fragment de-excitation for zaid=%d.\n"
