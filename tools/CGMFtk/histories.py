@@ -120,9 +120,9 @@ class Histories:
 
     # angular momentum
     if ang_mom_printed:
-        self.cmNeutronL = self.histories[:,25]
+        self.cmNeutronDeltaJ = self.histories[:,25]
     else:
-        self.cmNeutronL = None
+        self.cmNeutronDeltaJ = None
 
     # Fission fragment momentum vectors (pre-neutron emission)
     pfx = self.histories[:,13]
@@ -189,7 +189,7 @@ class Histories:
 
     cmNeutronDircos    = [] #-- neutron directional cosines in center-of-mass frame of the fragment
     cmNeutronEnergies  = [] #-- neutron energies in CM frame (MeV)
-    cmNeutronL         = [] #-- neutron OAM in CM frame
+    cmNeutronDeltaJ    = [] #-- neutron OAM in CM frame
     labNeutronDircos   = [] #-- neutron directional cosines in LAB frame
     labNeutronEnergies = [] #-- neutron energies in LAB frame (MeV)
 
@@ -290,7 +290,7 @@ class Histories:
       # in center of mass frame
       cmDn=[]
       cmEn=[]
-      cmLn=[]
+      cmDJ=[]
       labDn=[]
       labEn=[]
       labDpren=[]
@@ -309,7 +309,7 @@ class Histories:
           cmDn.append(np.array([float(data[0+i*num_dptns]),float(data[1+i*num_dptns]),float(data[2+i*num_dptns])]))
           cmEn.append(float(data[3+i*num_dptns]))
           if ang_mom_printed:
-              cmLn.append(float(data[4+i*num_dptns]))
+              cmDJ.append(float(data[4+i*num_dptns]))
 
         # in lab frame
         data=f.readline().split()
@@ -359,7 +359,7 @@ class Histories:
 
       cmNeutronEnergies.append(cmEn)
       cmNeutronDircos.append(cmDn)
-      cmNeutronL.append(cmLn)
+      cmNeutronDeltaJ.append(cmDJ)
       labNeutronEnergies.append(labEn)
       labNeutronDircos.append(labDn)
       labPreFissionNeutronEnergies.append(labEpren)
@@ -387,7 +387,7 @@ class Histories:
         data = np.dstack(
                 (A,Z,U,J,P,KEpre,nmult,gmult,cmNeutronEnergies,labNeutronEnergies,cmGammaEnergies,
                  labGammaEnergies,photonAges,preFragmentsX,preFragmentsY,preFragmentsZ,postFragmentsX,postFragmentsY,postFragmentsZ,
-                 cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost,cmNeutronL)
+                 cmNeutronDircos,labNeutronDircos,prenmult,labPreFissionNeutronEnergies,labPreFissionNeutronDircos,KEpost,cmNeutronDeltaJ)
                 )
     else:
         data = np.dstack(
@@ -531,9 +531,9 @@ class Histories:
     """Returns a list of lists of the neutron energies in the cm frame for each fission fragment"""
     return (self.nEcm)
 
-  def getNeutronL (self):
+  def getNeutronDeltaJ (self):
     """Returns a 2D array of integers of L values, 0th axis being history, 1st neutron """
-    return (self.cmNeutronL)
+    return (self.cmNeutronDeltaJ)
 
   def getGammaElab (self):
     """Returns a list of lists of the gamma energies for each fission fragment"""
