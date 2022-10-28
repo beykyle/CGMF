@@ -85,7 +85,7 @@ void setPdataOMP(string fname, int ip) {
 
   auto print_if_rank0 = [&ip,&fname](string OM_name) {
     if (ip ==0) {
-      printf("Reading %s parameters from %s", OM_name.c_str(), fname.c_str() );
+      printf("Reading %s parameters from %s\n", OM_name.c_str(), fname.c_str() );
     }
   };
 
