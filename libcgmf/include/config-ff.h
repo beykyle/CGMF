@@ -99,11 +99,16 @@ struct fissionEventType {
   double fragmentDircosu = 0.0;
   double fragmentDircosv = 0.0;
   double fragmentDircosw = 0.0;
-
-  int A = 0, Z = 0; // fission fragment mass and charge numbers
-  double KE = 0.0,
-         KEpost =
-             0.0;   // fragment kinetic energy (pre- and post-neutron emission)
+  
+  // fission fragment mass and charge numbers
+  int A = 0;
+  int Z = 0; 
+  
+  // fragment kinetic energy 
+  // (pre- and post-neutron emission)  
+  double KE     = 0.0;
+  double KEpost = 0.0;  
+                        
   double U = 0.0;   // initial excitation energy
   float spin = 0.0; // initial spin
   int parity = 0;   // initial parity
