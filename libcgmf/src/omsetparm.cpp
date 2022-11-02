@@ -78,10 +78,12 @@ unsigned int omSetOmp(double e, ZAnumber *target, Pdata *proj, Optical *omp) {
     //  set potfm
     potfm = omp_library(potfm >> 8, z0, a0, z1, a1, e, omp);
     
-    omp->volume.real = omp_file->real_cent_V(z0,a0,e);
-    omp->volume.imag = omp_file->cmpl_cent_V(z0, a0, e);
-    omp->surface.real = omp_file->real_surf_V(z0, a0, e);
-    omp->surface.imag = omp_file->cmpl_surf_V(z0, a0, e);
+    omp->volume.real = -omp_file->real_cent_V(z0,a0,e);
+    omp->volume.imag = -omp_file->cmpl_cent_V(z0, a0, e);
+    omp->surface.real = omp_file->real_surf_V(z0, a0, e)/ 
+      (4 * omp_file->cmpl_surf_a(z0,a0,e));
+    omp->surface.imag = omp_file->cmpl_surf_V(z0, a0, e)/ 
+      (4 * omp_file->cmpl_surf_a(z0,a0,e));
     omp->spin_orbit.real = omp_file->real_spin_V(z0, a0, e) / CSPO;
     omp->spin_orbit.imag = omp_file->cmpl_spin_V(z0, a0, e) / CSPO;
 
