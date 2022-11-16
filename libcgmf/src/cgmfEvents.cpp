@@ -496,24 +496,24 @@ cgmfEvent::cgmfEvent(int isotope, double eng, double time, double timew,
       neutronAges[i]     = 0.0;
 
       cmNeutronEnergies[i] = eventLF.cmNeutronEnergies[i];
-      cmNeutronDircosu[i] = eventLF.cmNeutronDircosu[i];
-      cmNeutronDircosv[i] = eventLF.cmNeutronDircosv[i];
-      cmNeutronDircosw[i] = eventLF.cmNeutronDircosw[i];
+      cmNeutronDircosu[i]  = eventLF.cmNeutronDircosu[i];
+      cmNeutronDircosv[i]  = eventLF.cmNeutronDircosv[i];
+      cmNeutronDircosw[i]  = eventLF.cmNeutronDircosw[i];
     }
 
     for (int i = 0; i < eventHF.nu; i++) {
       ii = i + eventLF.nu;
-      neutronDeltaJ[ii]   = eventLF.neutronDeltaJ[i];
+      neutronDeltaJ[ii]   = eventHF.neutronDeltaJ[i];
       neutronEnergies[ii] = eventHF.neutronEnergies[i];
-      neutronDircosu[ii] = eventHF.neutronDircosu[i];
-      neutronDircosv[ii] = eventHF.neutronDircosv[i];
-      neutronDircosw[ii] = eventHF.neutronDircosw[i];
+      neutronDircosu[ii]  = eventHF.neutronDircosu[i];
+      neutronDircosv[ii]  = eventHF.neutronDircosv[i];
+      neutronDircosw[ii]  = eventHF.neutronDircosw[i];
       neutronAges[ii] = 0.0;
 
       cmNeutronEnergies[ii] = eventHF.cmNeutronEnergies[i];
-      cmNeutronDircosu[ii] = eventHF.cmNeutronDircosu[i];
-      cmNeutronDircosv[ii] = eventHF.cmNeutronDircosv[i];
-      cmNeutronDircosw[ii] = eventHF.cmNeutronDircosw[i];
+      cmNeutronDircosu[ii]  = eventHF.cmNeutronDircosu[i];
+      cmNeutronDircosv[ii]  = eventHF.cmNeutronDircosv[i];
+      cmNeutronDircosw[ii]  = eventHF.cmNeutronDircosw[i];
     }
   }
 

@@ -608,7 +608,7 @@ void printEventToFile(FILE *fp, cgmfEvent *event,
 
   // Center-of-Mass neutron (energy, directional cosines) from heavy fragment
   for (int n1 = nul; n1 < nul + nuh; n1++) {
-    deltaJ = 0; // TODO
+    deltaJ = event->getCmNeutronDeltaJ(n1);
     eng = event->getCmNeutronEnergy(n1);
     diru = event->getCmNeutronDircosu(n1);
     dirv = event->getCmNeutronDircosv(n1);

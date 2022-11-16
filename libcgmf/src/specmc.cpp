@@ -1087,7 +1087,7 @@ void recordEmittedParticlesFission(fissionEventType *fe) {
   for (int i = 0; i < 3; i++) 
     fe->postFragmentMomentum[i] = fe->preFragmentMomentum[i];
 
-  boost(fragmentMomentum, Z, A, neutronMultiplicity, cmNeutronEnergies,
+  kn_boost(fragmentMomentum, Z, A, neutronMultiplicity, cmNeutronEnergies,
         neutronEnergies, cmVn, Vn, gammaMultiplicity, cmGammaEnergies,
         gammaEnergies, cmVg, Vg);
 

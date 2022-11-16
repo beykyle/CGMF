@@ -14,7 +14,7 @@
 
 #include "config-ff.h"
 
-void boost(double fragmentMomentum[3], int Zf, int Af, int neutronMultiplicity,
+void kn_boost(double fragmentMomentum[3], int Zf, int Af, int neutronMultiplicity,
            double cmNeutronEnergies[MAX_NUMBER_NEUTRONS],
            double neutronEnergies[MAX_NUMBER_NEUTRONS],
            double cmNEutronVelocities[MAX_NUMBER_NEUTRONS][3],
