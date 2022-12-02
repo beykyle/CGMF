@@ -17,6 +17,7 @@
 
 # Imports
 import numpy as np
+import pandas as pd
 import sys
 
 # Functions
@@ -28,6 +29,8 @@ class Histories:
     filename -- file path/name
     nevents -- number of fission events to read in
     """
+
+    self.ang_mom_printed = ang_mom_printed
 
     # check that the files exists, otherwise, exit
     try:
@@ -401,6 +404,34 @@ class Histories:
     return (data)
 
   # Functions to return all quantities recorded
+
+  def getDataframe(self):
+      """Get a histories as a Pandas dataframe"""
+
+      if self.ang_mom_printed:
+          data = [
+                    self.A, self.Z, self.N, self.U, self.J, self.P, self.KEpre, self.KEpost,
+                    self.nu, self.nug, self.nEcm, self.nElab, self.nEcmFragments, self.nElabFragments,
+                    self.gEcm, self.gElab, self.cmNeutronDeltaJ
+                ]
+
+          columns=[
+            "A", "Z", "N", "U", "J", "P", "KEpre", "KEpost", "nu", "nug", "nEcm", "nElab",
+            "nEcmFrag", "nElabFrag", "gEcm", "gElab", "cmNdJ"
+          ]
+      else:
+          data = [
+                    self.A, self.Z, self.N, self.U, self.J, self.P, self.KEpre, self.KEpost,
+                    self.nu, self.nug, self.nEcm, self.nElab, self.nEcmFragments, self.nElabFragments,
+                    self.gEcm, self.gElab
+                ]
+
+          columns=[
+            "A", "Z", "N", "U", "J", "P", "KEpre", "KEpost", "nu", "nug", "nEcm", "nElab",
+            "nEcmFrag", "nElabFrag", "gEcm", "gElab"
+          ]
+
+      return pd.DataFrame.from_dict(dict(zip(columns, data)))
 
   def getFissionHistories(self):
     """Returns a list with the full simulation history"""
