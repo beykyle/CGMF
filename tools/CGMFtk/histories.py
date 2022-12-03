@@ -405,8 +405,8 @@ class Histories:
 
   # Functions to return all quantities recorded
 
-  def getDataframe(self):
-      """Get a histories as a Pandas dataframe"""
+  def getFragmentEventDataFrame(self):
+      """Get single fragment histories as a Pandas dataframe"""
 
       if self.ang_mom_printed:
           data = [
@@ -432,6 +432,21 @@ class Histories:
           ]
 
       return pd.DataFrame.from_dict(dict(zip(columns, data)))
+
+  def getParticleEventDataFrame(self):
+      """ Get a Pandas DataFrame with each emitted particle as a row """
+      df = self.getFragmentEventDataFrame()
+      return unnest_neutrons(unnest_gammas(df))
+
+  def getNeutronEventDataFrame(self):
+      """ Get each a Pandas DataFrame with each emitted neutron as a row """
+      df = self.getFragmentEventDataFrame()
+      return unnest_neutrons(df)
+
+  def getGammaEventDataFrame(self):
+      """ Get each a Pandas DataFrame with each emitted gamma as a row """
+      df = self.getFragmentEventDataFrame()
+      return unnest_neutrons(df)
 
   def getFissionHistories(self):
     """Returns a list with the full simulation history"""
@@ -1578,4 +1593,25 @@ class ListTable(list):
       html.append("</tr>")
     html.append("</center>")
     return ''.join(html)
+
+
+def unnest_neutrons(df : pd.DataFrame ):
+    def get_order(nu):
+        return list(range(nu))
+
+    df["neutron_order"] = df["nu"].apply(get_order)
+
+    df = df.loc[df["nu"] >= 1]
+
+    return df.explode(column=["neutron_order", "nEcm", "nElab", "nElabFrag",  "nEcmFrag",  "cmNdJ"])
+
+def unnest_gammas(df : pd.DataFrame ):
+    def get_order(nu):
+        return list(range(nu))
+
+    df["gamma_order"] = df["nug"].apply(get_order)
+
+    df = df.loc[df["nug"] >= 1]
+
+    return df.explode(column=["gamma_order", "gEcm", "gElab"])
 
