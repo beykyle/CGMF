@@ -110,6 +110,7 @@ Options:
 
 
 The `-o` option currently accepts the following global optical models: [Koning-Delaroche](https://www.sciencedirect.com/science/article/pii/S0375947402013210), [WLH](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.127.182502), and [Chapel-Hill 89](https://www.sciencedirect.com/science/article/pii/037015739190039O). Example parameter files are contained in `data/optical` 
+
 ---
 Results
 -------
