@@ -1595,23 +1595,22 @@ class ListTable(list):
     return ''.join(html)
 
 
-def unnest_neutrons(df : pd.DataFrame ):
-    def get_order(nu):
-        return list(range(nu))
+def get_order(nu):
+    return list(range(1,nu+1))
 
-    df["neutron_order"] = df["nu"].apply(get_order)
+def unnest_neutrons(df : pd.DataFrame ):
+
+    df["neutron"] = df["nu"].apply(get_order)
 
     df = df.loc[df["nu"] >= 1]
 
-    return df.explode(column=["neutron_order", "nEcm", "nElab", "nElabFrag",  "nEcmFrag",  "cmNdJ"])
+    return df.explode(column=["neutron", "nEcm", "nElab", "nElabFrag",  "nEcmFrag",  "cmNdJ"])
 
 def unnest_gammas(df : pd.DataFrame ):
-    def get_order(nu):
-        return list(range(nu))
 
-    df["gamma_order"] = df["nug"].apply(get_order)
+    df["gamma"] = df["nug"].apply(get_order)
 
     df = df.loc[df["nug"] >= 1]
 
-    return df.explode(column=["gamma_order", "gEcm", "gElab"])
+    return df.explode(column=["gamma", "gEcm", "gElab"])
 
