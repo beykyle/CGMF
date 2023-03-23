@@ -869,7 +869,7 @@ class Histories:
   #-- P(nu)              #
   #################################################################
 
-  def Pnu (self, Eth=None):
+  def Pnu (self, Eth=None, nu=None):
     """Returns a list of probability as a function of neutron multiplicity
 
     Eth -- optional energy threshold, MeV
@@ -878,8 +878,8 @@ class Histories:
     if (Eth is not None):
       Eth = float(Eth)
       nutot = []
-      #nE = self.nElabLF + self.nElabHF + self.preFissionNeutronElab
-      nE = self.nElab + self.preFissionNeutronElab
+      nE = self.nElabLF + self.nElabHF + self.preFissionNeutronElab
+      #nE = self.nElab + self.preFissionNeutronElab
       for x in nE:
         x = np.array(x)
         nutot.append(len(x[x>=Eth]))
@@ -888,19 +888,20 @@ class Histories:
       #nutot = self.nuLF + self.nuHF + self.preFissionNu
       nutot = self.nutot +self.preFissionNu
 
-    numax = np.max(nutot)
-    nu = np.arange(0,numax+1,1)
-    proba = np.zeros(numax+1)
-    s=float(self.numberEvents)
+    if nu is None:
+        nu = np.arange(0,numax+1,1)
+
+    proba = np.zeros_like(nu)
     for i in nu:
-      proba[i] = len(nutot[nutot==i])/s
-    return (nu,proba)
+      proba[i] = len(nutot[nutot==i])
+
+    return (nu,proba / np.sum(proba))
 
   #################################################################
   #-- P(nug)              #
   #################################################################
 
-  def Pnug (self, Eth=None):
+  def Pnug (self, Eth=None, nug=None):
     """Returns a list of probability as a function of neutron multiplicity
 
     Eth -- optional energy threshold, MeV
@@ -917,13 +918,13 @@ class Histories:
     else:
       nugtot = self.nugtot
 
-    nugmax = np.max(nugtot)
-    nug = np.arange(0,nugmax+1,1)
-    proba = np.zeros(nugmax+1)
-    s=float(self.numberEvents)
+    if nug is None:
+        nug = np.arange(0,nugmax+1,1)
+
+    proba = np.zeros_like(nug)
     for i in nug:
-      proba[i] = len(nugtot[nugtot==i])/s
-    return (nug,proba)
+      proba[i] = len(nugtot[nugtot==i])
+    return (nug, proba / np.sum(proba))
 
   #################################################################
   #-- quantities as a function of the fragment mass    #
@@ -1050,17 +1051,19 @@ class Histories:
   #-- Average Prompt Fission Neutron Spectrum      #
   #################################################################
 
-  def pfns (self,Eth=None):
+  def pfns (self, Eth=None, egrid=None):
     """Returns two arrays, one for the energy grid, and one for the corresponding prompt fission neutron spectrum
 
     Eth - neutron threshold energy, MeV
     """
-    if (Eth is not None):
+    if Eth is not None:
       Eth = float(Eth)
     else:
       Eth = 0.0
     # Outgoing energy grid
-    egrid = np.logspace(-3,2,100)
+    if egrid is None:
+        egrid = np.logspace(-3,2,100)
+
     degrid = egrid[1:]-egrid[:-1]
     nElab = self.nElabHF + self.nElabLF + self.preFissionNeutronElab
     l=[]
@@ -1077,7 +1080,7 @@ class Histories:
   #-- Average Prompt Fission Gamma Spectrum      #
   #################################################################
 
-  def pfgs (self,Eth=None,minTime=None,maxTime=None):
+  def pfgs (self,Eth=None, minTime=None, maxTime=None, egrid=None):
     """Returns two arrays, one for the energy grid, and one for the corresponding prompt fission gamma spectrum
 
     Eth - optional gamma threshold energy, MeV
@@ -1089,7 +1092,9 @@ class Histories:
     else:
       Eth = 0.0
     # Outoing energy grid
-    egrid = np.logspace(-1,1,200)
+    if egrid is None:
+        egrid = np.logspace(-1,1,200)
+
     degrid = egrid[1:]-egrid[:-1]
     l=[]
     gElab = self.gElab
