@@ -1,7 +1,7 @@
 #ifndef PYBINDINGS
 #define PYBINDINGS
 
-#include <iostream>
+#include <string>
 
 #include <pybind11/pybind11.h>
 
@@ -16,11 +16,15 @@
 #include <mpi.h>
 #endif
 
+std::string test_func() {
+  return "pyCGMF test";
+}
+
 //namespace py = pybind11;
 
 PYBIND11_MODULE(pyCGMF, m) {
   m.doc() = "pyCGMF: python bindings for running CGMF on MPI";
-  m.def("test", [](){ return "test"; }, "returns the string \"test\"" );
+  m.def("test", &test_func, "returns the string \"pyCGMF test\"" );
 }
 
 #endif

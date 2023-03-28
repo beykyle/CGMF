@@ -64,8 +64,8 @@ message("Fetching nlohmann/json")
 FetchContent_MakeAvailable(json omplib)
 
 
-option(BUILD_PY_MODULE "BUILD_PY_MODULE" OFF)
-if(BUILD_PY_MODULE)
+option(BUILD_PYCGMF "BUILD_PYCGMF" OFF)
+if(BUILD_PYCGMF)
   find_package(Python REQUIRED  COMPONENTS Interpreter Development NumPy)
   find_package(pybind11 REQUIRED CONFIG)
   find_package(xtensor REQUIRED)
