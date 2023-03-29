@@ -43,10 +43,11 @@ void run_histories_get_nubar( arr& nu) {
   
   // prepare RNG and event
   UniformRNG rng(1);
-  rng.set_seed(seed);
   cgmfEvent* event = NULL;
 
   for ( int i = 0; i < nevents; i++ ) {
+    rng.set_seed( i * seed);
+    set_rng(rng);
     event = new cgmfEvent(ZAIDt, incidentEnergy, 0.0, 1.0e-8, -1);
     auto nuLF = event->getLightFragmentNeutronNu();
     auto nuHF = event->getHeavyFragmentNeutronNu();
