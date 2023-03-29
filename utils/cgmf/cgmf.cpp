@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
             2 * std::chrono::system_clock::now().time_since_epoch().count() + 1;
         printf("Using seed: %llu\n", seed);
         rng.set_seed(seed);
-      } else if (RANDOM_SEED_BY_ARG) {
+      } else if (i + ip * RANDOM_SEED_BY_ARG) {
         rng.set_seed(seed);
       } else {
         rng.set_seed(i + ip * nevents + startingEvent);
