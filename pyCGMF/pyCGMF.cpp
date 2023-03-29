@@ -25,13 +25,23 @@ std::string test_func() {
 namespace py = pybind11;
 using arr = py::array_t<double>;
 
+constexpr static auto ZAIDt = 98252;
+constexpr static auto incidentEnergy = 0.0;
+constexpr static auto seed = 13;
+
 void run_histories_get_nubar( arr& nu) {
+  // prepare array
   assert(  nu.request().ndim != 1  );
   int nevents = nu.size();
   auto n = nu.mutable_unchecked<1>();
-  const auto ZAIDt = 98252;
-  const auto incidentEnergy = 0.0;
-  const auto seed = 13;
+  
+  // set data directory path
+  std::string data_path = "";
+  std::string omp_fname = "";
+  setdatapath(data_path);
+  //setPdataOMP(omp_fname, 0);
+  
+  // prepare RNG and event
   UniformRNG rng(1);
   rng.set_seed(seed);
   cgmfEvent* event = NULL;
@@ -42,6 +52,7 @@ void run_histories_get_nubar( arr& nu) {
     auto nuHF = event->getHeavyFragmentNeutronNu();
     auto nuPre = event->getPreFissionNeutronNu();
     n[i] = nuLF + nuHF + nuPre;
+    delete event;
   }
 }
 
