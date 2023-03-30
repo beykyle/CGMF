@@ -54,6 +54,7 @@ plt.step(ebins, pfns)
 plt.xscale("log")
 plt.xlabel(r"$E_{lab}$ [MeV]")
 plt.ylabel(r"PFNS [Mev$^{-1}$]")
+plt.show()
 ```
 
 we can even run in parallel using `mpi4py`:
