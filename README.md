@@ -18,7 +18,7 @@ pip install -e .
 ```
 
 This will:
-- build `CGMF` as a an executable
+- build `CGMF` as a library
 - build the `pyCGMF` module
 - build and install `CGMFtk`, if it's not already installed
 - install the `pyCGMF` module
