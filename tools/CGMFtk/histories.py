@@ -423,11 +423,10 @@ class Histories:
   def save(self, path):
       np.save(path, self.histories, allow_pickle=True)
 
-  def load(self, path):
-      self = Histories(from_arr=np.load(path, allow_pickle=True))
-      return self
+  def load(path):
+      return Histories(from_arr=np.load(path, allow_pickle=True))
 
- def as_numpy():
+  def as_numpy():
      return self.histories
 
   # Functions to return all quantities recorded
