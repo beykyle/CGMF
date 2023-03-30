@@ -43,7 +43,7 @@ histories.save("histories.npy")
 
 #...
 
-histories.load("histories.npy")
+histories = Histories( from_arr=np.load("histories.npy"))
 
 # we can plot our results
 ebins, pfns = histories.pfns()
