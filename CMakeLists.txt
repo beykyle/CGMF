@@ -41,9 +41,6 @@ if(cgmf.tests)
   enable_testing()
 endif()
 
-if(NOT SUBPROJECT)
-  add_subdirectory(utils)
-endif()
 
 if(cgmf.installation)
   install(DIRECTORY data/
@@ -71,5 +68,10 @@ if(BUILD_PYCGMF)
   find_package(xtensor REQUIRED)
   find_package(xtensor-python REQUIRED)
   add_subdirectory(pyCGMF)
+else()
+  # build executable only in traditional standalone projects
+  if(NOT SUBPROJECT)
+    add_subdirectory(utils)
+  endif()
 endif()
 
