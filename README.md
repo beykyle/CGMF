@@ -41,7 +41,7 @@ print(histories.nubar())
 # we can save the histories in binary to analyze later
 histories.save("histories.npy")
 #...
-histories = Histories.load("histories.npy")
+histories_copy = Histories.load("histories.npy")
 
 
 # we can plot our results
