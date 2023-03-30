@@ -25,7 +25,7 @@ This will:
 
 Now, we can run `CGMF`, and populate a `CGMFtk.histories.Histories` object without ever writing to disk or copying data:
 
-```
+```python
 from pyCGMF import CGMF_Input, run
 from CGMFtk.histories import Histories
 
@@ -60,7 +60,7 @@ plt.show()
 we can even run in parallel using `mpi4py`:
 
 First, create a script called `run_cgmf.py`
-```
+```python
 from pyCGMF import CGMF_Input, run
 from CGMFtk.histories import Histories
 
