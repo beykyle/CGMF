@@ -40,10 +40,9 @@ print(histories.nubar())
 
 # we can save the histories in binary to analyze later
 histories.save("histories.npy")
-
 #...
+histories = Histories.load("histories.npy")
 
-histories = Histories( from_arr=np.load("histories.npy"))
 
 # we can plot our results
 ebins, pfns = histories.pfns()
