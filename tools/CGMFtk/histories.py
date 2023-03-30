@@ -23,40 +23,56 @@ import sys
 # Functions
 class Histories:
 
-  def __init__ (self, filename, nevents=None, ang_mom_printed=False):
+  def __init__ (self, filename=None, nevents=None, ang_mom_printed=False, from_arr=None):
     """! Initializes the Histories class
 
-    filename -- file path/name
+    filename -- file path/name. if None, from_arr must be provided
     nevents -- number of fission events to read in
+    ang_mom_printed -- if the angular momentum removed is included as a data field
+    from_arr -- numpy array containing histories. If not None, no file will be read
     """
 
-    self.ang_mom_printed = ang_mom_printed
+    if from_arr is not None:
+        self.histories  = from_arr
+        shape = self.histories.shape
 
-    # check that the files exists, otherwise, exit
-    try:
-      f = open(filename)
-      self.filename = filename
-      f.close()
-    except IOError:
-      sys.exit('that file does not exist')
+        if shape[1] == 26:
+            self.ang_mom_printed = True
+        elif shape[1] == 25:
+            self.ang_mom_printed = False
+        else:
+            print("Invalid array shape for from_arr: {}".format(shape) )
+            print("Shape should be (nevents,c), where c can be 25 or 26 (depending on whether or not angular momentum is printed)")
+            exit(1)
+    else:
+        assert(filename is not None)
+        self.ang_mom_printed = ang_mom_printed
 
-    # check that nevents is > 0, if given
-    try:
-      val = int(nevents)
-      if (val <= 0):
-        print ('nevents must be greater than zero')
-        sys.exit()
-    except ValueError:
-      sys.exit('nevents must be a number greater than zero')
-    except TypeError:
-      if (nevents is not None):
-        sys.exit('nevents must be a number')
+        # check that the files exists, otherwise, exit
+        try:
+          f = open(filename)
+          self.filename = filename
+          f.close()
+        except IOError:
+          sys.exit('that file does not exist')
+
+        # check that nevents is > 0, if given
+        try:
+          val = int(nevents)
+          if (val <= 0):
+            print ('nevents must be greater than zero')
+            sys.exit()
+        except ValueError:
+          sys.exit('nevents must be a number greater than zero')
+        except TypeError:
+          if (nevents is not None):
+            sys.exit('nevents must be a number')
 
 
 
-    # read the history file
-    self.histories = self._readHistoryFileFromCGMF(
-            filename,nevents, ang_mom_printed=ang_mom_printed)
+        # read the history file
+        self.histories = self._readHistoryFileFromCGMF(
+                filename,nevents, ang_mom_printed=ang_mom_printed)
 
     self.numberFragments = len(self.histories)
     self.numberEvents = int(self.numberFragments/2)
@@ -403,8 +419,15 @@ class Histories:
 
     return (data)
 
-  # Functions to return all quantities recorded
+  # def numpy based IO
+  def save(self, path):
+      np.save(path, self.histories, allow_pickle=True)
 
+  def load(self, path):
+      self = Histories(from_arr=np.load(path, allow_pickle=True))
+      return self
+
+  # Functions to return all quantities recorded
   def getFragmentEventDataFrame(self):
       """Get single fragment histories as a Pandas dataframe"""
 
