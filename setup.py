@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from setuptools import Extension, setup
+from setuptools import Extension, setup, find_packages, Command
 from setuptools.command.build_ext import build_ext
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
@@ -122,10 +122,12 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", "."] + build_args, cwd=build_temp, check=True
         )
 
+
+
 setup(
     name="pyCGMF",
     version="1.0",
-    description="Python drivers for CGMF",
+    description="Python drivers and event based analysis for CGMF",
     author="Kyle Beyer",
     author_email="beykyle@umich.edu",
     zip_safe=False,
