@@ -124,7 +124,6 @@ class CMakeBuild(build_ext):
         )
 
 
-# first install CGMFtk
 def install_CGMFtk():
     try:
         import CGMFtk
@@ -139,12 +138,14 @@ def install_CGMFtk():
 
         os.chdir(os.path.join(os.path.dirname(__file__)))
 
+# first install CGMFtk
 install_CGMFtk()
 
+# then run setup
 setup(
     name="pyCGMF",
     version="1.0",
-    description="Python drivers for CGMF",
+    description="Python drivers to run histories of CGMF in parallel using MPI and analyze results in Python",
     author="Kyle Beyer",
     author_email="beykyle@umich.edu",
     zip_safe=False,
