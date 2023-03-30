@@ -1,3 +1,4 @@
+
 # adapted from https://github.com/pybind/cmake_example/blob/master/setup.py
 import os
 import re
@@ -5,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from setuptools import Extension, setup, find_packages, Command
+from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
@@ -123,11 +124,27 @@ class CMakeBuild(build_ext):
         )
 
 
+# first install CGMFtk
+def install_CGMFtk():
+    try:
+        import CGMFtk
+        print("CGMFtk already installed")
+    except ImportError as e:
+        print("CGMFtk has not been installed yet, installing now...")
+            # Change directory to tools
+        os.chdir(os.path.join(os.path.dirname(__file__), 'tools'))
+
+        # Use subprocess to run a shell command to build and install CGMFtk
+        subprocess.check_call(['pip', 'install', '-e', '.'])
+
+        os.chdir(os.path.join(os.path.dirname(__file__)))
+
+install_CGMFtk()
 
 setup(
     name="pyCGMF",
     version="1.0",
-    description="Python drivers and event based analysis for CGMF",
+    description="Python drivers for CGMF",
     author="Kyle Beyer",
     author_email="beykyle@umich.edu",
     zip_safe=False,
@@ -136,3 +153,4 @@ setup(
     extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.7",
 )
+

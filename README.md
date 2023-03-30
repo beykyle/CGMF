@@ -3,7 +3,102 @@ CGMF, Cascading Gamma-ray Multiplicity and Fission
 
 This is a modified version of [lanl/CGMF](https://github.com/lanl/CGMF) for use in uncertainty quantification. The new capabilities include the added options listed below. Includes the following dependencies which are automatically downloaded and integrated by the build system:
 - [nlohmann/json](https://github.com/nlohmann/json) for parsing json formatted parameter files
-- [beykyle/omplib](https://github.com/beykyle/omplib) a library of optical model potentials
+- [beykyle/omplib](https://github.com/beykyle/omplib) a library of optical model potentials and solvers
+
+The goal of this modification is to provide an easy to use platform for running CGMF with modified internal parameters (e.g. optical model parameter, and more), and analyzing the results. 
+
+Quickstart
+-------
+
+To build the `pyCGMF` module:
+
+```
+py setup.py build -j{nproc}
+pip install -e .
+```
+
+This will:
+- build `CGMF` as a an executable
+- build the `pyCGMF` module
+- build and install `CGMFtk`, if it's not already installed
+- install the `pyCGMF` module
+
+Now, we can run `CGMF`, and populate a `CGMFtk.histories.Histories` object without ever writing to disk or copying data:
+
+```
+from pyCGMF import CGMF_Input, run
+from CGMFtk.histories import Histories
+
+cgmf_input = CGMF_Input(
+    nevents = 1000,
+    zaid    = 98252,
+    einc    = 0.0
+)
+
+histories = run(cgmf_input)
+print(histories.nubar())
+
+# we can save the histories in binary to analyze later
+histories.save("histories.npy")
+
+#...
+
+histories.load("histories.npy")
+
+# we can plot our results
+ebins, pfns = histories.pfns()
+
+from matplotlib import pyplot as plt
+
+plt.step(ebins, pfns)
+plt.xscale("log")
+plt.xlabel(r"$E_{lab}$ [MeV]")
+plt.ylabel(r"PFNS [Mev$^{-1}$]")
+```
+
+we can even run in parallel using `mpi4py`:
+
+First, create a script called `run_cgmf.py`
+```
+from pyCGMF import CGMF_Input, run
+from CGMFtk.histories import Histories
+
+from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+size = comm.Get_size()
+rank = comm.Get_rank()
+
+# 1000 events per MPI rank
+cgmf_input = CGMF_Input(
+    nevents  = 1000,
+    zaid     = 98252,
+    einc     = 0.0,
+    MPI_rank = rank
+)
+hist_arr = run(cgmf_input).as_numpy()
+all_hist_arr = None
+
+# gather histories from all MPI ranks to single data structure
+if rank == 0:
+    all_hist_arr = np.empty( (size,) + hist_arr.shape , dtype='float')
+comm.Gather(hist_arr, all_hist_arr, root=0)
+
+# create new Histories object with history info from all MPI ranks,
+# write the output to disk as binary np array
+all_histories = Histories(  from_arr=np.concatenate( all_histories, axis=0  ) )
+all_histories.save("histories.npy")
+```
+
+This can be executed with `mpirun`:
+
+```
+mpirun -n 4 python run_cgmf.py
+```
+
+More extensive examples are contained in notebooks in `pyCGMF/examples/*.ipynb`. 
+
+The original documentation to build CGMF as an executable is preserved below, with the addition of the extra command line arguments.
 
 ---
 Authors
