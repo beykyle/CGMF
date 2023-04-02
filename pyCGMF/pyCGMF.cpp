@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <pybind11/cast.h>
+#include <pybind11/pytypes.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -18,6 +20,7 @@
 #include <mpi.h>
 #endif
 
+using namespace pybind11::literals;
 namespace py = pybind11;
 
 py::module_ np = py::module_::import("numpy"); 
@@ -38,19 +41,51 @@ struct CGMF_Input {
   std::string omp_fpath    = "";
 };
 
+enum class Fragment : int {
+  A, Z, U, J, P, KEPre, Nu, Nug, PxPre, PyPre, PzPre, PxPost, PyPost, PzPost, NuPFN, KEPost
+};
+
 struct EventData {
-  arr_t<double>   fragments;  
+  //CGMFtk data that us fixed in size we can store as np array
+  arr_t<double> fragments;
+
+  // CGMFtk data that is not fixed in size (e.g. neutron energies depends on 
+  // CGMF's simulated neutron multiplicities), we store as lists of lists
+  py::list neutron_Elab;
+  py::list neutron_Ecm;
+  py::list gamma_Elab;
+  py::list gamma_Ecm;
+  py::list gamma_Age;
+  py::list neutron_dircoslab;
+  py::list neutron_dircoscm;
+  py::list pf_neutron_Elab;
+  py::list pf_neutron_dircoslab;
 
   EventData(const CGMF_Input& input) {
     // 2 fragments / event * n events
     const auto N = input.nevents * 2;
     
+    // 16 fields enumerated in Fragment
     fragments.resize( shape_t<double>{ N, 16 } );
   }
 
   void process(cgmfEvent* event, int i) {
     
     auto frags = fragments.mutable_unchecked<2>();
+    
+    // initialize inner lists for emitted particle data in event
+    // neutron
+    auto comEn = py::list();
+    auto labEn = py::list();
+    auto labdc = py::list();
+    auto comdc = py::list();
+    // gamma
+    auto comEg = py::list();
+    auto labEg = py::list();
+    auto gAge  = py::list();
+    // pre-fission neutron
+    auto pflabEn = py::list();
+    auto pflabdc = py::list();
 
     auto idx = 2 * i;
     
@@ -61,23 +96,23 @@ struct EventData {
     const auto  nup   = event->getPreFissionNeutronNu();
 
     // light fragment
-    frags(idx,0) = event->getLightFragmentMass();
-    frags(idx,1) = event->getLightFragmentCharge();
-    frags(idx,2) = event->getLightFragmentExcitationEnergy();
-    frags(idx,3) = event->getLightFragmentSpin();
-    frags(idx,4) = event->getLightFragmentParity();
-    frags(idx,5) = event->getLightFragmentKineticEnergy();
-    frags(idx,6) = nul;
-    frags(idx,7) = nugl;
+    frags(idx,Fragment::A)     = event->getLightFragmentMass();
+    frags(idx,Fragment::Z)     = event->getLightFragmentCharge();
+    frags(idx,Fragment::U)     = event->getLightFragmentExcitationEnergy();
+    frags(idx,Fragment::J)     = event->getLightFragmentSpin();
+    frags(idx,Fragment::P)     = event->getLightFragmentParity();
+    frags(idx,Fragment::KEPre) = event->getLightFragmentKineticEnergy();
+    frags(idx,Fragment::Nu)    = nul;
+    frags(idx,Fragment::Nug)   = nugl;
 
-    frags(idx,8)  = event->getLightFragmentPreMomentumX();
-    frags(idx,9)  = event->getLightFragmentPreMomentumY();
-    frags(idx,10) = event->getLightFragmentPreMomentumZ();
-    frags(idx,11) = event->getLightFragmentPostMomentumX();
-    frags(idx,12) = event->getLightFragmentPostMomentumY();
-    frags(idx,13) = event->getLightFragmentPostMomentumZ();
-    frags(idx,14) = 0; 
-    frags(idx,15) = event->getLightFragmentKineticEnergyPost();
+    frags(idx,Fragment::PxPre)  = event->getLightFragmentPreMomentumX();
+    frags(idx,Fragment::PyPre)  = event->getLightFragmentPreMomentumY();
+    frags(idx,Fragment::PzPre)  = event->getLightFragmentPreMomentumZ();
+    frags(idx,Fragment::PxPost) = event->getLightFragmentPostMomentumX();
+    frags(idx,Fragment::PyPost) = event->getLightFragmentPostMomentumY();
+    frags(idx,Fragment::PzPost) = event->getLightFragmentPostMomentumZ();
+    frags(idx,Fragment::NuPFN)  = 0;
+    frags(idx,Fragment::KEPost) = event->getLightFragmentKineticEnergyPost();
     
     // neutrons LF
     for (int n = 0; n < nul; ++ n) {
@@ -96,37 +131,62 @@ struct EventData {
           }
         );
       
-      const auto ecm = event->getCmNeutronEnergy(n);
-      const auto elab = event->getNeutronEnergy(n);
-      //TODO
+      comEn.append( event->getCmNeutronEnergy(n) );
+      comEn.append( event->getNeutronEnergy(n) );
+      labdc.append( dircos_lab);
+      comdc.append( dircos_cm);
     }
     
     // gammas LF
     for (int n = 0; n < nugl; ++ n) {
-      // TODO ignore doppler shift?
-      //TODO
+      // TODO do we ignore doppler shift in CGMF?
+      comEg.append( event->getPhotonEnergy(n) );
+      labEg.append( event->getPhotonEnergy(n) );
+      gAge.append(  event->getPhotonAge(n) );
     }
+    
+    // append our inner emitted particle lists for the LF to the event-by-event lists
+    neutron_Elab.append( labEn );
+    neutron_Ecm.append( comEn );
+    gamma_Elab.append( labEg );
+    gamma_Ecm.append( comEg );
+    gamma_Age.append( gAge );
+    neutron_dircoslab.append( labdc );
+    neutron_dircoscm.append( comdc );
+    pf_neutron_Elab.append( pflabEn );
+    pf_neutron_dircoslab.append( pflabdc );
+
+    // clear inner lists
+    comEn = py::list();
+    labEn = py::list();
+    labdc = py::list();
+    comdc = py::list();
+    comEg = py::list();
+    labEg = py::list();
+    gAge  = py::list();
+    pflabEn = py::list();
+    pflabdc = py::list();
 
     idx++;
     
     // heavy fragment
-    frags(idx,0) = event->getHeavyFragmentMass();
-    frags(idx,1) = event->getHeavyFragmentCharge();
-    frags(idx,2) = event->getHeavyFragmentExcitationEnergy();
-    frags(idx,3) = event->getHeavyFragmentSpin();
-    frags(idx,4) = event->getHeavyFragmentParity();
-    frags(idx,5) = event->getHeavyFragmentKineticEnergy();
-    frags(idx,6) = nuh;
-    frags(idx,7) = nugh;
+    frags(idx,Fragment::A)     = event->getHeavyFragmentMass();
+    frags(idx,Fragment::Z)     = event->getHeavyFragmentCharge();
+    frags(idx,Fragment::U)     = event->getHeavyFragmentExcitationEnergy();
+    frags(idx,Fragment::J)     = event->getHeavyFragmentSpin();
+    frags(idx,Fragment::P)     = event->getHeavyFragmentParity();
+    frags(idx,Fragment::KEPre) = event->getHeavyFragmentKineticEnergy();
+    frags(idx,Fragment::Nu)    = nuh;
+    frags(idx,Fragment::Nug)   = nugh;
 
-    frags(idx,8)  = event->getHeavyFragmentPreMomentumX();
-    frags(idx,9)  = event->getHeavyFragmentPreMomentumY();
-    frags(idx,10) = event->getHeavyFragmentPreMomentumZ();
-    frags(idx,11) = event->getHeavyFragmentPostMomentumX();
-    frags(idx,12) = event->getHeavyFragmentPostMomentumY();
-    frags(idx,13) = event->getHeavyFragmentPostMomentumZ();
-    frags(idx,14) = nup;
-    frags(idx,15) = event->getHeavyFragmentKineticEnergyPost();
+    frags(idx,Fragment::PxPre)  = event->getHeavyFragmentPreMomentumX();
+    frags(idx,Fragment::PyPre)  = event->getHeavyFragmentPreMomentumY();
+    frags(idx,Fragment::PzPre)  = event->getHeavyFragmentPreMomentumZ();
+    frags(idx,Fragment::PxPost) = event->getHeavyFragmentPostMomentumX();
+    frags(idx,Fragment::PyPost) = event->getHeavyFragmentPostMomentumY();
+    frags(idx,Fragment::PzPost) = event->getHeavyFragmentPostMomentumZ();
+    frags(idx,Fragment::NuPFN)  = nup;
+    frags(idx,Fragment::KEPost) = event->getHeavyFragmentKineticEnergyPost();
 
     // neutrons HF
     for (int n = nul; n < nul + nuh; ++ n) {
@@ -144,14 +204,19 @@ struct EventData {
             event->getNeutronDircosw(n)
           }
         );
-      //TODO
+      
+      comEn.append( event->getCmNeutronEnergy(n) );
+      comEn.append( event->getNeutronEnergy(n) );
+      labdc.append( dircos_lab);
+      comdc.append( dircos_cm);
 
     }
     
     // gammas HF
     for (int n = nugl; n < nugl + nugh; ++ n) {
-      // TODO ignore doppler shift?
-      //TODO
+      comEg.append( event->getPhotonEnergy(n) );
+      labEg.append( event->getPhotonEnergy(n) );
+      gAge.append(  event->getPhotonAge(n) );
     }
     
     // pre-fission neutrons
@@ -163,12 +228,56 @@ struct EventData {
             event->getPreFissionNeutronDircosw(n)
           }
         );
-      //TODO
+      
+      pflabEn.append( event->getPreFissionNeutronEnergy(n) );
+      pflabdc.append( dircos_lab );
     }
+    
+    // append our inner emitted particle lists for the HF to the event-by-event lists
+    neutron_Elab.append( labEn );
+    neutron_Ecm.append( comEn );
+    gamma_Elab.append( labEg );
+    gamma_Ecm.append( comEg );
+    gamma_Age.append( gAge );
+    neutron_dircoslab.append( labdc );
+    neutron_dircoscm.append( comdc );
+    pf_neutron_Elab.append( pflabEn );
+    pf_neutron_dircoslab.append( pflabdc );
   }
+
+  py::object concat() {
+    // slap that numpy array in the format CGMFtk expects it
+    return np.attr("dstack")(
+          fragments[py::make_tuple(py::ellipsis(), Fragment::A)], 
+          fragments[py::make_tuple(py::ellipsis(), Fragment::Z)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::U)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::Z)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::KEPre)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::Nu)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::KEPre)],
+          neutron_Ecm,
+          neutron_Elab,
+          gamma_Ecm,
+          gamma_Elab,
+          gamma_Age,
+          fragments[py::make_tuple(py::ellipsis(), Fragment::PxPre)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::PyPre)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::PzPre)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::PxPost)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::PyPost)],
+          fragments[py::make_tuple(py::ellipsis(), Fragment::PzPost)],
+          neutron_dircoscm,
+          neutron_dircoslab,
+          fragments[py::make_tuple(py::ellipsis(), Fragment::NuPFN)],
+          pf_neutron_Elab,
+          pf_neutron_dircoslab,
+          fragments[py::make_tuple(py::ellipsis(), Fragment::KEPost)]
+        );
+  }
+
 };
 
-EventData run(const CGMF_Input& input) {
+py::object run(const CGMF_Input& input) {
 
   // pre-allocate data arrays based on number of events
   auto event_data = EventData(input);
@@ -196,7 +305,7 @@ EventData run(const CGMF_Input& input) {
     
     delete event;
   }
-  return event_data;
+  return event_data.concat();
 }
 
 
