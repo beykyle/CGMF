@@ -20,6 +20,8 @@
 
 namespace py = pybind11;
 
+py::module_ np = py::module_::import("numpy"); 
+
 template<typename T>
 using arr_t  = typename py::array_t<T>;
 template<typename T>
@@ -38,37 +40,17 @@ struct CGMF_Input {
 
 struct EventData {
   arr_t<double>   fragments;  
-  arr_t<py::list> neutrons;   
-  arr_t<py::list> gammas;
-  arr_t<py::list> pre_fission_neutrons;
 
   EventData(const CGMF_Input& input) {
     // 2 fragments / event * n events
     const auto N = input.nevents * 2;
     
-    // fragments has 16 fields in CGMFtk.histories.Histories (A,Z,J, ...)
     fragments.resize( shape_t<double>{ N, 16 } );
-    
-    // fields for emitted particles - size depends on event multiplicity;
-    // hence the list.
-    // neutrons have 4 fields: e_cm, e_lab, dircos_cm, dircos_lab
-    const auto nshape   = shape_t<py::list>{ N, 4 };
-    // gammas have e_cm, e_lab, ages
-    const auto gshape   = shape_t<py::list>{ N, 3 };
-    // pre fission neutrons have 2 fields: e_lab, dircos_lab
-    const auto pfnshape = shape_t<py::list>{ N, 2 };
-    
-    neutrons.resize(nshape);
-    gammas.resize(gshape);            
-    pre_fission_neutrons.resize(pfnshape);
   }
 
   void process(cgmfEvent* event, int i) {
     
     auto frags = fragments.mutable_unchecked<2>();
-    auto ns    = neutrons.mutable_unchecked<2>();
-    auto gs    = neutrons.mutable_unchecked<2>();
-    auto pfn   = pre_fission_neutrons.mutable_unchecked<2>();
 
     auto idx = 2 * i;
     
@@ -113,19 +95,16 @@ struct EventData {
             event->getNeutronDircosw(n)
           }
         );
-
-      ns(idx,0).append(event->getCmNeutronEnergy(n));
-      ns(idx,1).append(event->getNeutronEnergy(n));
-      ns(idx,2).append(dircos_cm);
-      ns(idx,3).append(dircos_lab);
+      
+      const auto ecm = event->getCmNeutronEnergy(n);
+      const auto elab = event->getNeutronEnergy(n);
+      //TODO
     }
     
     // gammas LF
     for (int n = 0; n < nugl; ++ n) {
       // TODO ignore doppler shift?
-      ns(idx,0).append(event->getPhotonEnergy(n));
-      ns(idx,1).append(event->getPhotonEnergy(n));
-      ns(idx,3).append(event->getPhotonAge(n));
+      //TODO
     }
 
     idx++;
@@ -165,19 +144,14 @@ struct EventData {
             event->getNeutronDircosw(n)
           }
         );
+      //TODO
 
-      ns(idx,0).append(event->getCmNeutronEnergy(n));
-      ns(idx,1).append(event->getNeutronEnergy(n));
-      ns(idx,2).append(dircos_cm);
-      ns(idx,3).append(dircos_lab);
     }
     
     // gammas HF
     for (int n = nugl; n < nugl + nugh; ++ n) {
       // TODO ignore doppler shift?
-      ns(idx,0).append(event->getPhotonEnergy(n));
-      ns(idx,1).append(event->getPhotonEnergy(n));
-      ns(idx,3).append(event->getPhotonAge(n));
+      //TODO
     }
     
     // pre-fission neutrons
@@ -189,9 +163,7 @@ struct EventData {
             event->getPreFissionNeutronDircosw(n)
           }
         );
-
-      pfn(idx,0).append(event->getPreFissionNeutronEnergy(n));
-      pfn(idx,1).append(dircos_lab);
+      //TODO
     }
   }
 };
