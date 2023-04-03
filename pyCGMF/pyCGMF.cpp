@@ -32,7 +32,7 @@ using shape_t = typename py::array_t<T>::ShapeContainer;
 
 struct CGMF_Input {
   int nevents;
-  int ZAIDt;
+  int zaid;
   double einc;
   
   double time_coinc_wndw   = 1.0e-8;
@@ -66,7 +66,13 @@ struct EventData {
     const auto N = input.nevents * 2;
     
     // 16 fields enumerated in Fragment
-    fragments.resize( shape_t<double>{ N, 16 } );
+    fragments.resize( shape_t<double>{ 16, N } );
+  }
+
+  py::array get_field_data( Fragment field ) {
+    const auto i = static_cast<int>(field);
+    auto res = py::array{ fragments[py::make_tuple(i, py::ellipsis())] };
+    return np.attr("array")(res);
   }
 
   void process(cgmfEvent* event, int i) {
@@ -96,23 +102,23 @@ struct EventData {
     const auto  nup   = event->getPreFissionNeutronNu();
 
     // light fragment
-    frags(idx,Fragment::A)     = event->getLightFragmentMass();
-    frags(idx,Fragment::Z)     = event->getLightFragmentCharge();
-    frags(idx,Fragment::U)     = event->getLightFragmentExcitationEnergy();
-    frags(idx,Fragment::J)     = event->getLightFragmentSpin();
-    frags(idx,Fragment::P)     = event->getLightFragmentParity();
-    frags(idx,Fragment::KEPre) = event->getLightFragmentKineticEnergy();
-    frags(idx,Fragment::Nu)    = nul;
-    frags(idx,Fragment::Nug)   = nugl;
+    frags(Fragment::A,idx)     = event->getLightFragmentMass();
+    frags(Fragment::Z,idx)     = event->getLightFragmentCharge();
+    frags(Fragment::U,idx)     = event->getLightFragmentExcitationEnergy();
+    frags(Fragment::J,idx)     = event->getLightFragmentSpin();
+    frags(Fragment::P,idx)     = event->getLightFragmentParity();
+    frags(Fragment::KEPre,idx) = event->getLightFragmentKineticEnergy();
+    frags(Fragment::Nu,idx)    = nul;
+    frags(Fragment::Nug,idx)   = nugl;
 
-    frags(idx,Fragment::PxPre)  = event->getLightFragmentPreMomentumX();
-    frags(idx,Fragment::PyPre)  = event->getLightFragmentPreMomentumY();
-    frags(idx,Fragment::PzPre)  = event->getLightFragmentPreMomentumZ();
-    frags(idx,Fragment::PxPost) = event->getLightFragmentPostMomentumX();
-    frags(idx,Fragment::PyPost) = event->getLightFragmentPostMomentumY();
-    frags(idx,Fragment::PzPost) = event->getLightFragmentPostMomentumZ();
-    frags(idx,Fragment::NuPFN)  = 0;
-    frags(idx,Fragment::KEPost) = event->getLightFragmentKineticEnergyPost();
+    frags(Fragment::PxPre,idx)  = event->getLightFragmentPreMomentumX();
+    frags(Fragment::PyPre,idx)  = event->getLightFragmentPreMomentumY();
+    frags(Fragment::PzPre,idx)  = event->getLightFragmentPreMomentumZ();
+    frags(Fragment::PxPost,idx) = event->getLightFragmentPostMomentumX();
+    frags(Fragment::PyPost,idx) = event->getLightFragmentPostMomentumY();
+    frags(Fragment::PzPost,idx) = event->getLightFragmentPostMomentumZ();
+    frags(Fragment::NuPFN,idx)  = 0;
+    frags(Fragment::KEPost,idx) = event->getLightFragmentKineticEnergyPost();
     
     // neutrons LF
     for (int n = 0; n < nul; ++ n) {
@@ -132,7 +138,7 @@ struct EventData {
         );
       
       comEn.append( event->getCmNeutronEnergy(n) );
-      comEn.append( event->getNeutronEnergy(n) );
+      labEn.append( event->getNeutronEnergy(n) );
       labdc.append( dircos_lab);
       comdc.append( dircos_cm);
     }
@@ -170,23 +176,23 @@ struct EventData {
     idx++;
     
     // heavy fragment
-    frags(idx,Fragment::A)     = event->getHeavyFragmentMass();
-    frags(idx,Fragment::Z)     = event->getHeavyFragmentCharge();
-    frags(idx,Fragment::U)     = event->getHeavyFragmentExcitationEnergy();
-    frags(idx,Fragment::J)     = event->getHeavyFragmentSpin();
-    frags(idx,Fragment::P)     = event->getHeavyFragmentParity();
-    frags(idx,Fragment::KEPre) = event->getHeavyFragmentKineticEnergy();
-    frags(idx,Fragment::Nu)    = nuh;
-    frags(idx,Fragment::Nug)   = nugh;
+    frags(Fragment::A,idx)     = event->getHeavyFragmentMass();
+    frags(Fragment::Z,idx)     = event->getHeavyFragmentCharge();
+    frags(Fragment::U,idx)     = event->getHeavyFragmentExcitationEnergy();
+    frags(Fragment::J,idx)     = event->getHeavyFragmentSpin();
+    frags(Fragment::P,idx)     = event->getHeavyFragmentParity();
+    frags(Fragment::KEPre,idx) = event->getHeavyFragmentKineticEnergy();
+    frags(Fragment::Nu,idx)    = nuh;
+    frags(Fragment::Nug,idx)   = nugh;
 
-    frags(idx,Fragment::PxPre)  = event->getHeavyFragmentPreMomentumX();
-    frags(idx,Fragment::PyPre)  = event->getHeavyFragmentPreMomentumY();
-    frags(idx,Fragment::PzPre)  = event->getHeavyFragmentPreMomentumZ();
-    frags(idx,Fragment::PxPost) = event->getHeavyFragmentPostMomentumX();
-    frags(idx,Fragment::PyPost) = event->getHeavyFragmentPostMomentumY();
-    frags(idx,Fragment::PzPost) = event->getHeavyFragmentPostMomentumZ();
-    frags(idx,Fragment::NuPFN)  = nup;
-    frags(idx,Fragment::KEPost) = event->getHeavyFragmentKineticEnergyPost();
+    frags(Fragment::PxPre,idx)  = event->getHeavyFragmentPreMomentumX();
+    frags(Fragment::PyPre,idx)  = event->getHeavyFragmentPreMomentumY();
+    frags(Fragment::PzPre,idx)  = event->getHeavyFragmentPreMomentumZ();
+    frags(Fragment::PxPost,idx) = event->getHeavyFragmentPostMomentumX();
+    frags(Fragment::PyPost,idx) = event->getHeavyFragmentPostMomentumY();
+    frags(Fragment::PzPost,idx) = event->getHeavyFragmentPostMomentumZ();
+    frags(Fragment::NuPFN,idx)  = nup;
+    frags(Fragment::KEPost,idx) = event->getHeavyFragmentKineticEnergyPost();
 
     // neutrons HF
     for (int n = nul; n < nul + nuh; ++ n) {
@@ -206,7 +212,7 @@ struct EventData {
         );
       
       comEn.append( event->getCmNeutronEnergy(n) );
-      comEn.append( event->getNeutronEnergy(n) );
+      labEn.append( event->getNeutronEnergy(n) );
       labdc.append( dircos_lab);
       comdc.append( dircos_cm);
 
@@ -232,6 +238,13 @@ struct EventData {
       pflabEn.append( event->getPreFissionNeutronEnergy(n) );
       pflabdc.append( dircos_lab );
     }
+    if (nup == 0) {
+      // np array w/ dtype 'object' filled with all empty lists
+      // misbehaves, so we have to fill it with garbage if
+      // there are no pre-fission neutrons
+      pflabEn.append( 0.0 );
+      pflabdc.append( arr_t<double>({0.,0.,0.}));
+    }
     
     // append our inner emitted particle lists for the HF to the event-by-event lists
     neutron_Elab.append( labEn );
@@ -241,38 +254,40 @@ struct EventData {
     gamma_Age.append( gAge );
     neutron_dircoslab.append( labdc );
     neutron_dircoscm.append( comdc );
-    pf_neutron_Elab.append( pflabEn );
-    pf_neutron_dircoslab.append( pflabdc );
+      pf_neutron_Elab.append( pflabEn );
+      pf_neutron_dircoslab.append( pflabdc );
   }
 
   py::object concat() {
     // slap that numpy array in the format CGMFtk expects it
     return np.attr("dstack")(
-          fragments[py::make_tuple(py::ellipsis(), Fragment::A)], 
-          fragments[py::make_tuple(py::ellipsis(), Fragment::Z)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::U)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::Z)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::KEPre)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::Nu)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::KEPre)],
+        py::make_tuple(
+          get_field_data(Fragment::A), 
+          get_field_data(Fragment::Z),
+          get_field_data(Fragment::U),
+          get_field_data(Fragment::J),
+          get_field_data(Fragment::P),
+          get_field_data(Fragment::KEPre),
+          get_field_data(Fragment::Nu),
+          get_field_data(Fragment::Nug),
           neutron_Ecm,
           neutron_Elab,
           gamma_Ecm,
           gamma_Elab,
           gamma_Age,
-          fragments[py::make_tuple(py::ellipsis(), Fragment::PxPre)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::PyPre)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::PzPre)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::PxPost)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::PyPost)],
-          fragments[py::make_tuple(py::ellipsis(), Fragment::PzPost)],
+          get_field_data(Fragment::PxPre),
+          get_field_data(Fragment::PyPre),
+          get_field_data(Fragment::PzPre),
+          get_field_data(Fragment::PxPost),
+          get_field_data(Fragment::PyPost),
+          get_field_data(Fragment::PzPost),
           neutron_dircoscm,
           neutron_dircoslab,
-          fragments[py::make_tuple(py::ellipsis(), Fragment::NuPFN)],
+          get_field_data( Fragment::NuPFN),
           pf_neutron_Elab,
           pf_neutron_dircoslab,
-          fragments[py::make_tuple(py::ellipsis(), Fragment::KEPost)]
-        );
+          get_field_data(Fragment::KEPost) 
+        ))[py::make_tuple(0, py::ellipsis())];
   }
 
 };
@@ -298,7 +313,7 @@ py::object run(const CGMF_Input& input) {
     rng.set_seed( input.seed + i + i * input.seed);
     set_rng(rng);
     event = new cgmfEvent(
-        input.ZAIDt, input.einc, 0.0, input.time_coinc_wndw, -1);
+        input.zaid, input.einc, 0.0, input.time_coinc_wndw, -1);
     
     // fill data for this event
     event_data.process(event, i);
@@ -322,7 +337,7 @@ PYBIND11_MODULE(pyCGMF, m) {
   .def(
        py::init<int, int, double, double, int, int, std::string >(),
        py::arg("nevents") = 100,
-       py::arg("ZAIDt") = 98252,
+       py::arg("zaid") = 98252,
        py::arg("einc") = 0.0,
        py::arg("time_coinc_wndw") = 1.0e-8,
        py::arg("MPI_rank") = 0,
@@ -330,7 +345,7 @@ PYBIND11_MODULE(pyCGMF, m) {
        py::arg("omp_fpath") = ""
       )
   .def_readwrite("nevents", &CGMF_Input::nevents)
-  .def_readwrite("ZAID_t", &CGMF_Input::ZAIDt)
+  .def_readwrite("zaid", &CGMF_Input::zaid)
   .def_readwrite("einc", &CGMF_Input::einc)
   .def_readwrite("time_coinc_wndw", &CGMF_Input::time_coinc_wndw)
   .def_readwrite("MPI_rank", &CGMF_Input::MPI_rank)
