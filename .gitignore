@@ -8,3 +8,4 @@ compile_commands.json
 tools/build/*
 tools/dist/*
 *.egg-info*
+*.so
