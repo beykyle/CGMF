@@ -26,39 +26,10 @@ This will:
 Now, we can run `CGMF`, and populate a `CGMFtk.histories.Histories` object without ever writing to disk or copying data:
 
 ```python
-from pyCGMF import CGMF_Input, run
-from CGMFtk.histories import Histories
-
-cgmf_input = CGMF_Input(
-    nevents = 1000,
-    zaid    = 98252,
-    einc    = 0.0
-)
-
-histories = run(cgmf_input)
-print(histories.nubar())
-
-# we can save the histories in binary to analyze later
-histories.save("histories.npy")
-#...
-histories_copy = Histories.load("histories.npy")
-
-
-# we can plot our results
-ebins, pfns = histories.pfns()
-
-from matplotlib import pyplot as plt
-
-plt.step(ebins, pfns)
-plt.xscale("log")
-plt.xlabel(r"$E_{lab}$ [MeV]")
-plt.ylabel(r"PFNS [Mev$^{-1}$]")
-plt.show()
+(frac(1,2)
 ```
 
-we can even run in parallel using `mpi4py`:
-
-First, create a script called `run_cgmf.py`
+we can even run in parallel using `mpi4py`. First, create a script called `run_cgmf.py`:
 ```python
 from pyCGMF import CGMF_Input, run
 from CGMFtk.histories import Histories
