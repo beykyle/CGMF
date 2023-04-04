@@ -5,7 +5,7 @@ This is a modified version of [lanl/CGMF](https://github.com/lanl/CGMF) for use 
 - [nlohmann/json](https://github.com/nlohmann/json) for parsing json formatted parameter files
 - [beykyle/omplib](https://github.com/beykyle/omplib) a library of optical model potentials and solvers
 
-The goal of this modification is to provide an easy to use platform for running CGMF with modified internal parameters (e.g. optical model parameter, and more), and analyzing the results. 
+The goal of this modification is to provide an easy to use platform for running CGMF with modified internal parameters (e.g. optical model parameter, and more), and analyzing the results. To do this Python bindings are provided to run CGMF, directly populating event-by-event information into a `CGMFtk.histories.Histories` object, without writing to disk or copying large amounts of data in memory.
 
 Quickstart
 -------
