@@ -24,6 +24,7 @@ using namespace pybind11::literals;
 namespace py = pybind11;
 
 py::module_ np = py::module_::import("numpy"); 
+py::module_ CGMFtk = py::module_::import("CGMFtk").attr("histories"); 
 
 template<typename T>
 using arr_t  = typename py::array_t<T>;
@@ -320,7 +321,8 @@ py::object run(const CGMF_Input& input) {
     
     delete event;
   }
-  return event_data.concat();
+  return CGMFtk.attr("Histories")(
+      "from_arr"_a =  event_data.concat() );
 }
 
 
