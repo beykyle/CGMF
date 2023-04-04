@@ -24,7 +24,7 @@ using namespace pybind11::literals;
 namespace py = pybind11;
 
 py::module_ np = py::module_::import("numpy"); 
-py::module_ CGMFtk = py::module_::import("CGMFtk").attr("histories"); 
+py::module_ CGMFtk = py::module_::import("CGMFtk");
 
 template<typename T>
 using arr_t  = typename py::array_t<T>;

@@ -134,7 +134,7 @@ def install_CGMFtk():
         os.chdir(os.path.join(os.path.dirname(__file__), 'tools'))
 
         # Use subprocess to run a shell command to build and install CGMFtk
-        subprocess.check_call(['pip', 'install', '-e', '.'])
+        subprocess.check_call(['python', 'setup.py', 'install'])
 
         os.chdir(os.path.join(os.path.dirname(__file__)))
 

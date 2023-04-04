@@ -8,18 +8,18 @@ cgmf_input = CGMF_Input(
     einc    = 0.0
 )
 
-histories = Histories( from_arr=run(cgmf_input) )
-print("nubar: {}".format( histories.nubar() ) )
+histories = run(cgmf_input)
+print("nubar: {}".format( histories.nubartot() ) )
 
-# we can save the histories in binary to analyze later
+# we can save the histories to disk (in compact binary fmt using numpy.save/load)
 histories.save("histories.npy")
 
 #...
-
-histories = Histories.load("histories.npy")
+# later, we can load them back into memory
+hist2 = Histories.load("histories.npy")
 
 # we can plot our results
-ebins, pfns = histories.pfns()
+ebins, pfns = hist2.pfns()
 
 from matplotlib import pyplot as plt
 
