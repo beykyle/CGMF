@@ -26,10 +26,28 @@ This will:
 Now, we can run `CGMF`, and populate a `CGMFtk.histories.Histories` object without ever writing to disk or copying data:
 
 ```python
-(frac(1,2)
+from pyCGMF import CGMF_Input, run
+from CGMFtk.histories import Histories
+import numpy as np
+
+cgmf_input = CGMF_Input(
+    nevents = 100,
+    zaid    = 98252,
+    einc    = 0.0
+)
+
+histories = run(cgmf_input)
+print("nubar: {}".format( histories.nubartot() ) )
+
+# we can save the histories to disk (in compact binary fmt using numpy.save/load)
+histories.save("histories.npy")
+
+#...
+# later, we can load them back into memory
+hist2 = Histories.load("histories.npy")
 ```
 
-we can even run in parallel using `mpi4py`. First, create a script called `run_cgmf.py`:
+we can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
 ```python
 from pyCGMF import CGMF_Input, run
 from CGMFtk.histories import Histories
@@ -41,27 +59,29 @@ size = comm.Get_size()
 rank = comm.Get_rank()
 
 # 1000 events per MPI rank
-cgmf_input = CGMF_Input(
+inp = CGMF_Input(
     nevents  = 1000,
     zaid     = 98252,
     einc     = 0.0,
     MPI_rank = rank
 )
-hist_arr = run(cgmf_input).as_numpy()
-all_hist_arr = None
 
-# gather histories from all MPI ranks to single data structure
+# run worker
+hists = run(cgmf_input)
+
+# write results from just this rank:
+hists.save("histories_rank_{}.npy".format(rank))
+
+# gather histories from all MPI ranks
+result = comm.gather(hists.histories, root=0)
+
+# concatenate them and print the result
 if rank == 0:
-    all_hist_arr = np.empty( (size,) + hist_arr.shape , dtype='float')
-comm.Gather(hist_arr, all_hist_arr, root=0)
-
-# create new Histories object with history info from all MPI ranks,
-# write the output to disk as binary np array
-all_histories = Histories(  from_arr=np.concatenate( all_histories, axis=0  ) )
-all_histories.save("histories.npy")
+    all_histories = Histories(  from_arr=np.concatenate( result, axis=0  ) )
+    all_histories.save("all_histories.npy")
 ```
 
-This can be executed with `mpirun`:
+This can be executed with `mpirun`, e.g.:
 
 ```
 mpirun -n 4 python run_cgmf.py
