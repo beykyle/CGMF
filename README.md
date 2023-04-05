@@ -23,7 +23,7 @@ This will:
 - build and install `CGMFtk`, if it's not already installed
 - install the `pyCGMF` module
 
-Now, we can run `CGMF`, and populate a `CGMFtk.histories.Histories` object without ever writing to disk or copying data:
+Now we can import `pyCGMF` within Python, to run `CGMF`, and populate a `CGMFtk.Histories` object without ever writing to disk or copying data, like so:
 
 ```python
 from pyCGMF import CGMF_Input, run
@@ -50,7 +50,7 @@ hist2 = Histories.load("histories.npy")
 we can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
 ```python
 from pyCGMF import CGMF_Input, run
-from CGMFtk.histories import Histories
+from CGMFtk import Histories
 
 from mpi4py import MPI
 
