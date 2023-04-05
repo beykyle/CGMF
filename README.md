@@ -46,7 +46,7 @@ histories.save("histories.npy")
 # later, we can load them back into memory
 hist2 = Histories.load("histories.npy")
 ```
-When we do do disk I/O by calling `Histories.load/save`, we make use of `numpy.load/save` under the hood for speed and minial disk usage. We can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
+When we do do disk I/O by calling `Histories.load/save`, we make use of `numpy.load/save` under the hood for speed and minimal disk usage. We can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
 ```python
 from pyCGMF import CGMF_Input, run
 from CGMFtk import Histories
