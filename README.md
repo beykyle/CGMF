@@ -46,8 +46,7 @@ histories.save("histories.npy")
 # later, we can load them back into memory
 hist2 = Histories.load("histories.npy")
 ```
-
-we can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
+When we do do disk I/O by calling `Histories.load/save`, we make use of `numpy.load/save` under the hood for speed and minial disk usage. We can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
 ```python
 from pyCGMF import CGMF_Input, run
 from CGMFtk import Histories
@@ -66,16 +65,14 @@ inp = CGMF_Input(
     MPI_rank = rank
 )
 
-# run worker
+# run worker on each MPI rank
+# note: we don't have to write to disk!
 hists = run(cgmf_input)
-
-# write results from just this rank:
-hists.save("histories_rank_{}.npy".format(rank))
 
 # gather histories from all MPI ranks
 result = comm.gather(hists.histories, root=0)
 
-# concatenate them and print the result
+# concatenate all results into single Histories object and write the result
 if rank == 0:
     all_histories = Histories(  from_arr=np.concatenate( result, axis=0  ) )
     all_histories.save("all_histories.npy")
