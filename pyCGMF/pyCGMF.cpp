@@ -23,9 +23,6 @@
 using namespace pybind11::literals;
 namespace py = pybind11;
 
-py::module_ np = py::module_::import("numpy"); 
-py::module_ CGMFtk = py::module_::import("CGMFtk");
-
 template<typename T>
 using arr_t  = typename py::array_t<T>;
 template<typename T>
@@ -61,6 +58,9 @@ struct EventData {
   py::list neutron_dircoscm;
   py::list pf_neutron_Elab;
   py::list pf_neutron_dircoslab;
+  
+  py::module_ np = py::module_::import("numpy"); 
+  py::module_ CGMFtk = py::module_::import("CGMFtk");
 
   EventData(const CGMF_Input& input) {
     // 2 fragments / event * n events
@@ -70,7 +70,7 @@ struct EventData {
     fragments.resize( shape_t<double>{ 16, N } );
   }
 
-  py::array get_field_data( Fragment field ) {
+  py::array get_field_data( const Fragment& field ) {
     const auto i = static_cast<int>(field);
     auto res = py::array{ fragments[py::make_tuple(i, py::ellipsis())] };
     return np.attr("array")(res);
@@ -322,11 +322,10 @@ py::object run(const CGMF_Input& input) {
     delete event;
   }
   
-  auto histories = CGMFtk.attr("Histories")(
+  auto histories = event_data.CGMFtk.attr("Histories")(
       "from_arr"_a =  event_data.concat() );
   return histories;
 }
-
 
 PYBIND11_MODULE(pyCGMF, m) {
   m.doc() = "pyCGMF: python bindings for running CGMF on MPI";
