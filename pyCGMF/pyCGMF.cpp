@@ -255,8 +255,8 @@ struct EventData {
     gamma_Age.append( gAge );
     neutron_dircoslab.append( labdc );
     neutron_dircoscm.append( comdc );
-      pf_neutron_Elab.append( pflabEn );
-      pf_neutron_dircoslab.append( pflabdc );
+    pf_neutron_Elab.append( pflabEn );
+    pf_neutron_dircoslab.append( pflabdc );
   }
 
   py::object concat() {
@@ -321,8 +321,10 @@ py::object run(const CGMF_Input& input) {
     
     delete event;
   }
-  return CGMFtk.attr("Histories")(
+  
+  auto histories = CGMFtk.attr("Histories")(
       "from_arr"_a =  event_data.concat() );
+  return histories;
 }
 
 
@@ -332,7 +334,7 @@ PYBIND11_MODULE(pyCGMF, m) {
   m.def(
       "run", 
       &run, 
-      "runs nevents CGMF histories of 252-Cf (sf), returns data relating to each event" 
+      "runs CGMF histories, returns CGMFtk.Histories object containing event data" 
     );
   
   py::class_<CGMF_Input>(m, "CGMF_Input")
