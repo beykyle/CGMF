@@ -499,85 +499,46 @@ class Histories:
     # Functions to return all quantities recorded
     def getFragmentEventDataFrame(self):
         """Get single fragment histories as a Pandas dataframe"""
+        data = [
+            self.A,
+            self.Z,
+            self.N,
+            self.U,
+            self.J,
+            self.P,
+            self.KEpre,
+            self.KEpost,
+            self.nu,
+            self.nug,
+            self.nEcm,
+            self.nElab,
+            self.nEcmFragments,
+            self.nElabFragments,
+            self.gEcm,
+            self.gElab,
+        ]
+        columns = [
+            "A",
+            "Z",
+            "N",
+            "U",
+            "J",
+            "P",
+            "KEpre",
+            "KEpost",
+            "nu",
+            "nug",
+            "nEcm",
+            "nElab",
+            "nEcmFrag",
+            "nElabFrag",
+            "gEcm",
+            "gElab",
+        ]
 
         if self.ang_mom_printed:
-            data = [
-                self.A,
-                self.Z,
-                self.N,
-                self.U,
-                self.J,
-                self.P,
-                self.KEpre,
-                self.KEpost,
-                self.nu,
-                self.nug,
-                self.nEcm,
-                self.nElab,
-                self.nEcmFragments,
-                self.nElabFragments,
-                self.gEcm,
-                self.gElab,
-                self.cmNeutronDeltaJ,
-            ]
-
-            columns = [
-                "A",
-                "Z",
-                "N",
-                "U",
-                "J",
-                "P",
-                "KEpre",
-                "KEpost",
-                "nu",
-                "nug",
-                "nEcm",
-                "nElab",
-                "nEcmFrag",
-                "nElabFrag",
-                "gEcm",
-                "gElab",
-                "cmNdJ",
-            ]
-        else:
-            data = [
-                self.A,
-                self.Z,
-                self.N,
-                self.U,
-                self.J,
-                self.P,
-                self.KEpre,
-                self.KEpost,
-                self.nu,
-                self.nug,
-                self.nEcm,
-                self.nElab,
-                self.nEcmFragments,
-                self.nElabFragments,
-                self.gEcm,
-                self.gElab,
-            ]
-
-            columns = [
-                "A",
-                "Z",
-                "N",
-                "U",
-                "J",
-                "P",
-                "KEpre",
-                "KEpost",
-                "nu",
-                "nug",
-                "nEcm",
-                "nElab",
-                "nEcmFrag",
-                "nElabFrag",
-                "gEcm",
-                "gElab",
-            ]
+            data.append(self.cmNeutronDeltaJ)
+            columns.append("cmndJ")
 
         return pd.DataFrame.from_dict(dict(zip(columns, data)))
 
