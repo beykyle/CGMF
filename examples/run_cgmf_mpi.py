@@ -1,7 +1,7 @@
 # instructions to run:
-#   mpirun -n {nproc} python -m run_cgmf_mpi
+#   mpirun -n {nproc} python -m run_cgmf_mpi.py
 # or:
-#   mpirun -n {nproc} --use-hw-threads python -m run_cgmf_mpi
+#   mpirun -n {nproc} --use-hw-threads python -m run_cgmf_mpi.py
 
 from pyCGMF import CGMF_Input, run
 from CGMFtk.histories import Histories
@@ -15,6 +15,7 @@ def run_cgmf_mpi(inp : CGMF_Input, comm):
     hists = run(inp)
 
     # write results from just this rank:
+    print("Printing results from rank {}".format(inp.MPI_rank))
     hists.save("histories_rank_{}.npy".format(inp.MPI_rank))
 
     # gather histories from all MPI ranks
