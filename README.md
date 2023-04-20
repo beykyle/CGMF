@@ -85,7 +85,7 @@ This can be executed with `mpirun`, e.g.:
 mpirun -n 4 python run_cgmf.py
 ```
 
-More extensive examples are contained in notebooks in `pyCGMF/examples/*.ipynb`. 
+More extensive examples are contained in notebooks in `pyCGMF/examples/`. 
 
 The original documentation to build CGMF as an executable is preserved below, with the addition of the extra command line arguments.
 
