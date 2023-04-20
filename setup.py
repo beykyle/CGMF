@@ -38,6 +38,13 @@ class CMakeBuild(build_ext):
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
 
+        # this is needed for pip installed version of pybind11
+        try:
+            import pybind11
+            pybind11_dir = "-Dpybind11_DIR={}".format(pybind11.get_cmake_dir())
+        except ImportError as e:
+            print("pybind11 is a required module")
+
         cmake_generator = os.environ.get("CMAKE_GENERATOR", "")
 
         # Set Python_EXECUTABLE instead if you use PYBIND11_FINDPYTHON
@@ -47,7 +54,8 @@ class CMakeBuild(build_ext):
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
             f"-DBUILD_PYCGMF=On",
             f"-DCMAKE_BUILD_TYPE=Release",
-            f"-Dcgmf.x.MPI=On"
+            f"-Dcgmf.x.MPI=On",
+            pybind11_dir,
         ]
         build_args = []
         # Adding CMake arguments set as environment variable
@@ -139,7 +147,7 @@ def install_CGMFtk():
         os.chdir(os.path.join(os.path.dirname(__file__)))
 
 # first install CGMFtk
-install_CGMFtk()
+#install_CGMFtk()
 
 # then run setup
 setup(
