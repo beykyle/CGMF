@@ -220,7 +220,7 @@ void cgmEvent::initialization(unsigned int o) {
 
   MAX_ENERGY_BIN = 2500; // 1000; // 2000;
   MAX_J = 50;            // 50; // 70;
-  MAX_LEVELS = 700;      // 200; // 700;
+  MAX_LEVELS = 200;      // 200; // 700;
   ENERGY_BIN = 0.05;     // 0.1; // 0.05;
   CONTINUUM_LOWER_CUT = 0.02;
 
