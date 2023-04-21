@@ -14,13 +14,12 @@
 #define __CONFIG_H__
 
 /*----------------------------------------------------------
-Top directory in which CGM can find data files - 
+Top directory in which CGM can find data files -
      RIPL3 level data   /dir/to/levels/z001.dat
      kcksyst.dat        /dir/to/kcksyst.dat
 */
 
 extern std::string datadir;
-
 
 /*----------------------------------------------------------
 Neutron emission channel
@@ -34,32 +33,29 @@ const bool INCLUDE_NEUTRON_EMISSION = true;
 
 const double IGNORE_CAPTURE_GAMMA_RAY = 0.0;
 
-
 /*----------------------------------------------------------
 Energy bin width in the continuum
 */
 
-//const double ENERGY_BIN = 0.10;  // 100 keV
-//const double ENERGY_BIN = 0.01;  // 10 keV
-//const double ENERGY_BIN = 0.05;  // 50 keV
+// const double ENERGY_BIN = 0.10;  // 100 keV
+// const double ENERGY_BIN = 0.01;  // 10 keV
+// const double ENERGY_BIN = 0.05;  // 50 keV
 extern double ENERGY_BIN;
 
 /*----------------------------------------------------------
  Experimental time coincidence window (in seconds)
- By default, set to -99.0 to let all levels decay to the 
+ By default, set to -99.0 to let all levels decay to the
  ground.state.
  */
 
 const double EXPERIMENTAL_TIME_WINDOW = -99.0; // [default]
 // const double EXPERIMENTAL_TIME_WINDOW = 1.0e-8; // 10ns
 
-
 /*----------------------------------------------------------
 Beta strength function Gaussian broadening resolution
 */
 
-const double PROFILE_BROADENING_WIDTH = 0.1;  // 100 keV
-
+const double PROFILE_BROADENING_WIDTH = 0.1; // 100 keV
 
 /*----------------------------------------------------------
 Binary reaction calculation
@@ -69,31 +65,27 @@ Binary reaction calculation
 
 const bool BINARY_REACTION_ONLY = false;
 
-
 /*----------------------------------------------------------
  Neutron spectrum calculated by Evaporation model
  no gamma-ray emission
  */
 const bool EVAPORATION_SPECTRUM = false;
 
-
 /*----------------------------------------------------------
 Custom energy grid for spectra
 */
 
 #undef HAVE_PRIVATE_ENERGY_GRID
-//#define HAVE_PRIVATE_ENERGY_GRID
+// #define HAVE_PRIVATE_ENERGY_GRID
 
-#ifdef   HAVE_PRIVATE_ENERGY_GRID
+#ifdef HAVE_PRIVATE_ENERGY_GRID
 const int NUMBER_OF_PRIVATE_GRID = 272;
-#define   GRID_STRUCTURE_FILE    "privategrid.h"
+#define GRID_STRUCTURE_FILE "privategrid.h"
 #endif
 
-
 // no gamma decay if excitation energy of continuum is less than this
-//const double CONTINUUM_LOWER_CUT = 0.02;
+// const double CONTINUUM_LOWER_CUT = 0.02;
 extern double CONTINUUM_LOWER_CUT;
-
 
 /*----------------------------------------------------------
 Discrete gamma-ray Internal Conversion control
@@ -102,17 +94,16 @@ Discrete gamma-ray Internal Conversion control
 
 const bool INCLUDE_INTERNAL_CONVERSION = true;
 
-
 /*----------------------------------------------------------
  Monte Carlo control
  RANDOM_SEED_BY_TIME
  change random number seed each time by using
  internal clock
- 
+
  PERTURB_EXCITATION ENERGY
  random noise is added to the energies for
  the continuum to continuum transitions
- 
+
  EVENT_OUTPUT_FORMAT
  0: output MC history in the CGM standard format
  1: output MC history in the GEANT4 input format
@@ -121,6 +112,6 @@ const bool INCLUDE_INTERNAL_CONVERSION = true;
 
 const bool RANDOM_SEED_BY_TIME = false;
 const bool PERTURB_EXCITATON_ENERGY = true;
-const int  EVENT_OUTPUT_FORMAT = 0;
+const int EVENT_OUTPUT_FORMAT = 0;
 
 #endif //__CONFIG_H__

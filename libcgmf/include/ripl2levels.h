@@ -15,32 +15,33 @@
 
 #define LEVELDIRECTORY "levels/"
 #define RIPLDATA "ripl3-levels.dat"
-#define DISCRETEDATA "discreteLevels.dat" // used to be called 'cgmfDiscreteLevels-2015.dat'
+#define DISCRETEDATA                                                           \
+  "discreteLevels.dat" // used to be called 'cgmfDiscreteLevels-2015.dat'
 
 #include "structur.h"
 
 /**************************************/
 /*      Selection for Nmax            */
 /**************************************/
-typedef enum {normal=0, extended=1, reassign=2, all=3} MaxLevelCtl;
+typedef enum { normal = 0, extended = 1, reassign = 2, all = 3 } MaxLevelCtl;
 
 /**************************************/
 /*      ripl2levels.cpp               */
 /**************************************/
 #ifdef DEVUTIL
-void	riplReadDiscreteLevelData ();
-int     riplReadDiscreteLevels (ZAnumber *, Level *, MaxLevelCtl);
+void riplReadDiscreteLevelData();
+int riplReadDiscreteLevels(ZAnumber *, Level *, MaxLevelCtl);
 // void    riplReadDiscreteLevels (Nucleus *, MaxLevelCtl , int );
 #endif
 
-void	getRiplDiscreteLevels (Nucleus *, int);
-void	getRiplDiscreteLevels (Nucleus *);
-void	fixLevels(Nucleus *, bool, MaxLevelCtl);
+void getRiplDiscreteLevels(Nucleus *, int);
+void getRiplDiscreteLevels(Nucleus *);
+void fixLevels(Nucleus *, bool, MaxLevelCtl);
 
-void    riplDiscreteLevelsCleanup ();
+void riplDiscreteLevelsCleanup();
 
-void    readDiscreteLevelData ();
-void	getDiscreteLevels (Nucleus *, int);
-void	getDiscreteLevels (Nucleus *);
+void readDiscreteLevelData();
+void getDiscreteLevels(Nucleus *, int);
+void getDiscreteLevels(Nucleus *);
 
 #endif //__RIPL2LEVELS_H__

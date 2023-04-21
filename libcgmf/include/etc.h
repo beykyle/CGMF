@@ -10,23 +10,22 @@
 
 */
 
-
 #ifndef __ETC_H__
 #define __ETC_H__
 
-double  jvol_to_dep           (double, double, double, double);
-double  jsrf_to_dep           (double, double, double, double);
-double  dep_to_jvol           (double, double, double, double);
-double  dep_to_jsrf           (double, double, double, double);
+double jvol_to_dep(double, double, double, double);
+double jsrf_to_dep(double, double, double, double);
+double dep_to_jvol(double, double, double, double);
+double dep_to_jsrf(double, double, double, double);
 
-double  gaussian_weight       (double, double, double);
-double  laguerre              (int,    double, double);
-double  gam                   (double);
-double  loggamma              (double);
-double  legendre              (int, double);
-double  legendre1             (int, double);
-double  assocLegendrePol      (int,int,double);
-double  bessi2                (int, double);
-double  bessk2                (int, double);
+double gaussian_weight(double, double, double);
+double laguerre(int, double, double);
+double gam(double);
+double loggamma(double);
+double legendre(int, double);
+double legendre1(int, double);
+double assocLegendrePol(int, int, double);
+double bessi2(int, double);
+double bessk2(int, double);
 
 #endif //__ETC_H__

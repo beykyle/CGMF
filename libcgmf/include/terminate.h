@@ -12,11 +12,11 @@
 #ifndef __TERMINATE_H__
 #define __TERMINATE_H__
 
-int     cgmTerminateCode      (std::string);
-int     cgmTerminateCode      (std::string, int);
-int     cgmTerminateCode      (std::string, double);
+int cgmTerminateCode(std::string);
+int cgmTerminateCode(std::string, int);
+int cgmTerminateCode(std::string, double);
 
-void    cgmDeleteAllocated    ();
-void    cgmAllocateMemory     ();
+void cgmDeleteAllocated();
+void cgmAllocateMemory();
 
 #endif //__TERMINATE_H__
