@@ -760,13 +760,13 @@ void FissionFragments::readLevelDensityTables(string datafile) {
       while (!str.empty()) {
         for (int k = 0; k < NUME; k++) {
           //					data >>
-          //levelDensityParameters[A][0][k]; 					cout << k << " " <<
-          //levelDensityParameters[A][0][k] << "\n";
+          // levelDensityParameters[A][0][k]; 					cout << k << " "
+          // << levelDensityParameters[A][0][k] << "\n";
           for (int j = -dZ; j <= dZ; j++) {
             levelDensities[A][j + dZ][k] =
                 atof(str.substr((j + dZ + 1) * 10, 10).c_str());
-            //						cout << setprecision(6) <<
-            //atof(str.substr((j+dZ+1)*10,11).c_str()) << "\n";
+            //						cout << setprecision(6)
+            //<< atof(str.substr((j+dZ+1)*10,11).c_str()) << "\n";
           }
           getline(data, str);
         }
@@ -890,13 +890,13 @@ void FissionFragments::readLevelDensityParameterTables(string datafile) {
       while (!str.empty()) {
         for (int k = 0; k < NUME; k++) {
           //					data >>
-          //levelDensityParameters[A][0][k]; 					cout << k << " " <<
-          //levelDensityParameters[A][0][k] << "\n";
+          // levelDensityParameters[A][0][k]; 					cout << k << " "
+          // << levelDensityParameters[A][0][k] << "\n";
           for (int j = -dZ; j <= dZ; j++) {
             levelDensityParameters[A][j + dZ][k] =
                 atof(str.substr((j + dZ + 1) * 10, 10).c_str());
-            //						cout << setprecision(6) <<
-            //atof(str.substr((j+dZ+1)*10,11).c_str()) << "\n";
+            //						cout << setprecision(6)
+            //<< atof(str.substr((j+dZ+1)*10,11).c_str()) << "\n";
           }
           getline(data, str);
           //					cout << str << "\n";
@@ -2158,6 +2158,8 @@ void readRTA(void) {
     if (str[0] == '#')
       continue;
     while (str != "") {
+      if (str[0] == '\r' || str[0] == '\n')
+        break;
       RTAdata[c].ZAID = abs(atoi(str.substr(0, 7).c_str()));
       Amin = atoi(str.substr(7, 12).c_str());
       Amax = atoi(str.substr(12, 17).c_str());
@@ -5138,7 +5140,7 @@ double getLDP(int zaid, double energy) {
     for (int i = 0; i < NUM_GRID; i++)
       ldp2[zaid][i] = 5.0; // Default if missing
     //	cgmTerminateCode("level density parameter not found for this nucleus: ",
-    //zaid);
+    // zaid);
   }
 
   int iU = findEnergyIndex(energy, temperatureEnergyGrid);
@@ -5226,8 +5228,17 @@ void readAnisotropy(void) {
   string line;
   int iZID = 1;
   int counter = 0;
-  double Emin, Emax, Estep;
+  double Emin, Emax, Estep, ZAID;
   int nEsteps;
+
+  string str = ANISOTROPYFILE;
+  // try to open in current directory
+  fp.open(&str[0]);
+  // otherwise, from data directory
+  if (!fp) {
+    str = datadir + str;
+    fp.open(&str[0]);
+  }
 
   string str = ANISOTROPYFILE;
   // try to open in current directory
@@ -5255,11 +5266,16 @@ void readAnisotropy(void) {
       iZID += 1;
       counter = 0;
     }
-    fp >> anisotropy[iZID][0];
+    fp >> ZAID;
+    if (fp.eof())
+      break;
+    anisotropy[iZID][0] = ZAID;
     for (counter = 0; counter < nEsteps; counter++) {
       fp >> anisotropy[iZID][counter + 1];
     }
   }
+
+  return;
 
   return;
 }
@@ -5287,8 +5303,8 @@ void readPreEqAngularDistributionParameters(void) {
   j = 0;
   while (!fp.eof()) { // Loop through file
     getline(fp, str);
-    if (str.substr(0, 1) != "#" &&
-        !str.empty()) { // Ignore comments or empty lines
+    if (str.substr(0, 1) != "#" && !str.empty() && str[0] != '\r' &&
+        str[0] != '\n') { // Ignore comments or empty lines
       istringstream(str) >> preeqScatteringParams[j][i][0] >>
           preeqScatteringParams[j][i][1] >> preeqScatteringParams[j][i][2] >>
           preeqScatteringParams[j][i][3] >> preeqScatteringParams[j][i][4] >>
@@ -5423,6 +5439,24 @@ void readMasses(void) {
     if (str[0] == '#')
       continue;
     while (str != "") {
+      zaid = atoi(str.substr(0, 7).c_str());
+      m = atof(str.substr(7, 18).c_str());
+      masses[zaid] = m;
+      str = str.substr(18);
+    }
+  }
+
+  if (!fp)
+    cgmTerminateCode("masses data file not found");
+
+  std::fill_n(masses, MAX_ZAID, 0.0); // initialize to zeros
+
+  while (getline(fp, str)) {
+    if (str[0] == '#')
+      continue;
+    while (str != "") {
+      if (str[0] == '\r' || str[0] == '\n')
+        break;
       zaid = atoi(str.substr(0, 7).c_str());
       m = atof(str.substr(7, 18).c_str());
       masses[zaid] = m;
@@ -5878,8 +5912,8 @@ void FissionFragments::readMultichanceFissionData(void) {
         Pf[i] = new double[nn + 1];
       }
       //	    double Pf[nenergies][nn+1]; // Fission probabilities for
-      //each energy and multi-chance 	    double energies[nenergies]; // Value of the
-      //incident particle energy
+      // each energy and multi-chance 	    double energies[nenergies]; // Value
+      // of the incident particle energy
 
       // Read all the probabilities and energies
       for (int i = 0; i < nenergies; i++) {
