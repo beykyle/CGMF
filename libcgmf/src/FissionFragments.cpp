@@ -5240,15 +5240,6 @@ void readAnisotropy(void) {
     fp.open(&str[0]);
   }
 
-  string str = ANISOTROPYFILE;
-  // try to open in current directory
-  fp.open(&str[0]);
-  // otherwise, from data directory
-  if (!fp) {
-    str = datadir + str;
-    fp.open(&str[0]);
-  }
-
   while (getline(fp, line)) {
     if (line[0] != '#')
       break;
@@ -5428,22 +5419,6 @@ void readMasses(void) {
   if (!fp) {
     str = datadir + str;
     fp.open(&str[0]);
-  }
-
-  if (!fp)
-    cgmTerminateCode("masses data file not found");
-
-  std::fill_n(masses, MAX_ZAID, 0.0); // initialize to zeros
-
-  while (getline(fp, str)) {
-    if (str[0] == '#')
-      continue;
-    while (str != "") {
-      zaid = atoi(str.substr(0, 7).c_str());
-      m = atof(str.substr(7, 18).c_str());
-      masses[zaid] = m;
-      str = str.substr(18);
-    }
   }
 
   if (!fp)
