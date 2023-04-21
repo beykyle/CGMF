@@ -40,8 +40,8 @@ const int NUME = 401; // number of energies in level density tables; dE=0.25
 const double deltaE = 0.25; // energy-bin size used in level density tables
 const int NUME2 = 32;
 
-const int NUMdZ =
-    21; // [-dZ:+dZ] if dZ=10 for charge distribution around most probable Zp[A]
+// [-dZ:+dZ] if dZ=10 for charge distribution around most probable Zp[A]
+const int NUMdZ = 21;
 
 const int NUMMULT = 50; // number of multiplicities
 
@@ -53,13 +53,13 @@ const int MAX_NUMBER_PARTICLES = 50; // max. number of particles (n or g)
 
 #define MAX_NUMBER_NEUTRONS 10
 #define MAX_NUMBER_GAMMAS 50
-const int MAX_NUMBER_NEUTRONS_PRE =
-    3; // max. number of pre-fission neutrons emitted
+// max. number of pre-fission neutrons emitted
+const int MAX_NUMBER_NEUTRONS_PRE = 3; 
 
 const int NUMBER_SPECTRUM_ENERGY_GRID = 641; // 551;
 
-const int THETA_STEPS =
-    50; // number of steps in the cos(theta) CDF distribution
+// number of steps in the cos(theta) CDF distribution
+const int THETA_STEPS = 50; 
 
 // to pass as argument to MCNP fission event
 struct fissionEventType {
@@ -98,9 +98,9 @@ struct fissionEventType {
   double fragmentDircosw = 0.0;
 
   int A = 0, Z = 0; // fission fragment mass and charge numbers
-  double KE = 0.0,
-         KEpost =
-             0.0;   // fragment kinetic energy (pre- and post-neutron emission)
+  // fragment kinetic energy (pre- and post-neutron emission)
+  double KE = 0.0;
+  double KEpost = 0.0;   
   double U = 0.0;   // initial excitation energy
   float spin = 0.0; // initial spin
   int parity = 0;   // initial parity
