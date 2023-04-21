@@ -87,22 +87,16 @@ class Histories:
         self.nug = self.histories[:, 7].astype(int)
         self.nugLF = self.nug[::2]
         self.nugHF = self.nug[1::2]
-        self.nugtot = self.nugLF + self.nugHF
-
-        # neutron and gamma energies in the center-of-mass of fragments
+        self.nugtot = self.nugLF + self.nugHF # neutron and gamma energies in the center-of-mass of fragments
         self.nEcm = self.histories[:, 8]
         self.nEcmLF = self.nEcm[::2]
-        self.nEcmHF = self.nEcm[1::2]
-
-        # neutron and gamma energies in the lab
+        self.nEcmHF = self.nEcm[1::2] # neutron and gamma energies in the lab
         self.nElab = self.histories[:, 9]
         self.nElabLF = self.nElab[::2]
         self.nElabHF = self.nElab[1::2]
-
         self.gElab = self.histories[:, 11]
         self.gElabLF = self.gElab[::2]
         self.gElabHF = self.gElab[1::2]
-
         self.nEcmFragments = self.nEcm  # -- just fragments (no pre-fission neutrons)
         self.nElabFragments = self.nElab  # -- just fragments (no pre-fission neutrons)
 
