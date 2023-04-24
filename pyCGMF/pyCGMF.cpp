@@ -346,7 +346,7 @@ PYBIND11_MODULE(pyCGMF, m) {
        py::arg("nevents") = 100,
        py::arg("zaid") = 98252,
        py::arg("einc") = 0.0,
-       py::arg("time_coinc_wndw") = 1.0e-8,
+       py::arg("time_coinc_wndw") = -1,
        py::arg("MPI_rank") = 0,
        py::arg("seed") = 13,
        py::arg("omp_fpath") = ""
