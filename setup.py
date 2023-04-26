@@ -38,6 +38,8 @@ class CMakeBuild(build_ext):
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
 
+        print(f"Running build in {cfg} mode")
+
         # this is needed for pip installed version of pybind11
         try:
             import pybind11
