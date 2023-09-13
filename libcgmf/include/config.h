@@ -110,7 +110,7 @@ const bool INCLUDE_INTERNAL_CONVERSION = true;
  2: output MC history in the FFD input format
  */
 
-const bool PRINT_DELTA_J = true;
+const bool PRINT_DELTA_J = false;
 const bool RANDOM_SEED_BY_TIME = false;
 const bool RANDOM_SEED_BY_ARG = false;
 const bool PERTURB_EXCITATON_ENERGY = true;

@@ -39,11 +39,13 @@ const int NUMTKE = 300; // number of Total Kinetic Energy values
 
 const int NUME = 401; // number of energies in level density tables; dE=0.25
                       // MeV; up to Emax=100 MeV
-const double deltaE = 0.25; // energy-bin size used in level density tables
+
+// energy-bin size used in level density tables
+const double deltaE = 0.25;
 const int NUME2 = 32;
 
-const int NUMdZ =
-    21; // [-dZ:+dZ] if dZ=10 for charge distribution around most probable Zp[A]
+// [-dZ:+dZ] if dZ=10 for charge distribution around most probable Zp[A]
+const int NUMdZ = 21; 
 
 const int NUMMULT = 50; // number of multiplicities
 
@@ -55,13 +57,14 @@ const int MAX_NUMBER_PARTICLES = 50;
 
 #define MAX_NUMBER_NEUTRONS 10
 #define MAX_NUMBER_GAMMAS 50
-const int MAX_NUMBER_NEUTRONS_PRE =
-    3; // max. number of pre-fission neutrons emitted
+
+// max. number of pre-fission neutrons emitted
+const int MAX_NUMBER_NEUTRONS_PRE =3; 
 
 const int NUMBER_SPECTRUM_ENERGY_GRID = 641; // 551;
 
-const int THETA_STEPS =
-    50; // number of steps in the cos(theta) CDF distribution
+// number of steps in the cos(theta) CDF distribution
+const int THETA_STEPS = 50; 
 
 // to pass as argument to MCNP fission event
 struct fissionEventType {

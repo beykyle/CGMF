@@ -73,7 +73,11 @@ struct EventData {
   py::array get_field_data( const Fragment& field ) {
     const auto i = static_cast<int>(field);
     auto res = py::array{ fragments[py::make_tuple(i, py::ellipsis())] };
-    return np.attr("array")(res);
+    return np.attr("array")(res, "dtype"_a="object");
+  }
+
+  auto list_to_arr(py::list l) {
+    return np.attr("array")(l, "dtype"_a="object");
   }
 
   void process(cgmfEvent* event, int i) {
@@ -271,23 +275,23 @@ struct EventData {
           get_field_data(Fragment::KEPre),
           get_field_data(Fragment::Nu),
           get_field_data(Fragment::Nug),
-          neutron_Ecm,
-          neutron_Elab,
-          gamma_Ecm,
-          gamma_Elab,
-          gamma_Age,
+          list_to_arr(neutron_Ecm),
+          list_to_arr(neutron_Elab),
+          list_to_arr(gamma_Ecm),
+          list_to_arr(gamma_Elab),
+          list_to_arr(gamma_Age),
           get_field_data(Fragment::PxPre),
           get_field_data(Fragment::PyPre),
           get_field_data(Fragment::PzPre),
           get_field_data(Fragment::PxPost),
           get_field_data(Fragment::PyPost),
           get_field_data(Fragment::PzPost),
-          neutron_dircoscm,
-          neutron_dircoslab,
-          get_field_data( Fragment::NuPFN),
-          pf_neutron_Elab,
-          pf_neutron_dircoslab,
-          get_field_data(Fragment::KEPost) 
+          list_to_arr(neutron_dircoscm),
+          list_to_arr(neutron_dircoslab),
+          get_field_data(Fragment::NuPFN),
+          list_to_arr(pf_neutron_Elab),
+          list_to_arr(pf_neutron_dircoslab),
+          get_field_data(Fragment::KEPost)
         ))[py::make_tuple(0, py::ellipsis())];
   }
 
@@ -342,7 +346,7 @@ PYBIND11_MODULE(pyCGMF, m) {
        py::arg("nevents") = 100,
        py::arg("zaid") = 98252,
        py::arg("einc") = 0.0,
-       py::arg("time_coinc_wndw") = 1.0e-8,
+       py::arg("time_coinc_wndw") = -1,
        py::arg("MPI_rank") = 0,
        py::arg("seed") = 13,
        py::arg("omp_fpath") = ""

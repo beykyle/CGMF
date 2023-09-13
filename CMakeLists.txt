@@ -18,7 +18,7 @@ file(STRINGS VERSION CGMF_VER)
 set(cgmf_version ${CGMF_VER} CACHE STRING "CGMF Library Version")
 
 project(cgmf VERSION ${CGMF_VER} LANGUAGES C CXX)
-
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 17)
 
 include(CMakeDependentOption)
@@ -65,8 +65,6 @@ option(BUILD_PYCGMF "BUILD_PYCGMF" OFF)
 if(BUILD_PYCGMF)
   find_package(Python REQUIRED  COMPONENTS Interpreter Development NumPy)
   find_package(pybind11 REQUIRED CONFIG)
-  find_package(xtensor REQUIRED)
-  find_package(xtensor-python REQUIRED)
   add_subdirectory(pyCGMF)
 else()
   # build executable only in traditional standalone projects
