@@ -3,7 +3,7 @@
 # or:
 #   mpirun -n {nproc} --use-hw-threads python -m run_cgmf_mpi.py
 
-from pyCGMF import CGMF_Input, run
+from pyCGMF import Input, run
 from CGMFtk.histories import Histories
 
 import sys
@@ -11,7 +11,7 @@ import numpy as np
 from mpi4py import MPI
 
 
-def run_cgmf_mpi(inp: CGMF_Input, comm):
+def run_cgmf_mpi(inp: Input, comm):
     print("Running {} histories on rank {}".format(inp.nevents, inp.MPI_rank))
     sys.stdout.flush()
     # run worker
@@ -36,7 +36,7 @@ def run_cgmf_mpi(inp: CGMF_Input, comm):
     return None
 
 
-def test(inp: CGMF_Input, size: int, all_histories: Histories):
+def test(inp: Input, size: int, all_histories: Histories):
     for i in range(size):
         # just check columns 0-4: A, Z, J, P, U
         test = np.array(
@@ -61,7 +61,7 @@ def main():
     rank = comm.Get_rank()
 
     # 100 events per MPI rank
-    inp = CGMF_Input(nevents=100, zaid=98252, einc=0.0)
+    inp = Input(nevents=100, zaid=98252, einc=0.0)
 
     inp.MPI_rank = rank
 

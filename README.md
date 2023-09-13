@@ -26,11 +26,11 @@ This will:
 Now we can import `pyCGMF` within Python, to run `CGMF`, and populate a `CGMFtk.Histories` object without ever writing to disk or copying data, like so:
 
 ```python
-from pyCGMF import CGMF_Input, run
+from pyCGMF import Input, run
 from CGMFtk.histories import Histories
 import numpy as np
 
-inp = CGMF_Input(
+inp = Input(
     nevents = 100,
     zaid    = 98252,
     einc    = 0.0
@@ -49,7 +49,7 @@ When we do do disk I/O by calling `Histories.load/save`, we make use of `numpy.l
 
 We can even run in parallel, for example, by using `mpi4py`. First, create a script called `run_cgmf.py`:
 ```python
-from pyCGMF import CGMF_Input, run
+from pyCGMF import Input, run
 from CGMFtk import Histories
 
 from mpi4py import MPI
@@ -59,7 +59,7 @@ size = comm.Get_size()
 rank = comm.Get_rank()
 
 # 1000 events per MPI rank
-inp = CGMF_Input(
+inp = Input(
     nevents  = 1000,
     zaid     = 98252,
     einc     = 0.0,

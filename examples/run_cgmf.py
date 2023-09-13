@@ -1,8 +1,8 @@
-from pyCGMF import CGMF_Input, run
+from pyCGMF import Input, run
 from CGMFtk.histories import Histories
 import numpy as np
 
-cgmf_input = CGMF_Input(
+cgmf_input = Input(
     nevents = 100,
     zaid    = 98252,
     einc    = 0.0
