@@ -28,7 +28,7 @@ using arr_t  = typename py::array_t<T>;
 template<typename T>
 using shape_t = typename py::array_t<T>::ShapeContainer;
 
-struct CGMF_Input {
+struct Input {
   int nevents;
   int zaid;
   double einc;
@@ -62,7 +62,7 @@ struct EventData {
   py::module_ np = py::module_::import("numpy"); 
   py::module_ CGMFtk = py::module_::import("CGMFtk");
 
-  EventData(const CGMF_Input& input) {
+  EventData(const Input& input) {
     // 2 fragments / event * n events
     const auto N = input.nevents * 2;
     
@@ -127,20 +127,23 @@ struct EventData {
     
     // neutrons LF
     for (int n = 0; n < nul; ++ n) {
-      arr_t<double> dircos_cm (
-          std::array<double,3>{
-            event->getCmNeutronDircosu(n),
-            event->getCmNeutronDircosv(n),
-            event->getCmNeutronDircosw(n)
-          }
-        );
-      arr_t<double> dircos_lab (
-          std::array<double,3>{
-            event->getNeutronDircosu(n),
-            event->getNeutronDircosv(n),
-            event->getNeutronDircosw(n)
-          }
-        );
+      arr_t<double> dircos_cm(3);
+      {
+        auto r = dircos_cm.mutable_unchecked<1>();
+        r(0) = event->getCmNeutronDircosu(n);
+        r(1) = event->getCmNeutronDircosv(n);
+        r(2) = event->getCmNeutronDircosw(n);
+      }
+
+      arr_t<double> dircos_lab(3);
+      {
+        auto r = dircos_lab.mutable_unchecked<1>();
+        r(0) = event->getNeutronDircosu(n);
+        r(1) = event->getNeutronDircosv(n);
+        r(2) = event->getNeutronDircosw(n);
+      }
+
+      py::print(dircos_lab);
       
       comEn.append( event->getCmNeutronEnergy(n) );
       labEn.append( event->getNeutronEnergy(n) );
@@ -201,26 +204,26 @@ struct EventData {
 
     // neutrons HF
     for (int n = nul; n < nul + nuh; ++ n) {
-      arr_t<double> dircos_cm (
-          std::array<double,3>{
-            event->getCmNeutronDircosu(n),
-            event->getCmNeutronDircosv(n),
-            event->getCmNeutronDircosw(n)
-          }
-        );
-      arr_t<double> dircos_lab (
-          std::array<double,3>{
-            event->getNeutronDircosu(n),
-            event->getNeutronDircosv(n),
-            event->getNeutronDircosw(n)
-          }
-        );
+      arr_t<double> dircos_cm(3);
+      {
+        auto r = dircos_cm.mutable_unchecked<1>();
+        r(0) = event->getCmNeutronDircosu(n);
+        r(1) = event->getCmNeutronDircosv(n);
+        r(2) = event->getCmNeutronDircosw(n);
+      }
+
+      arr_t<double> dircos_lab(3);
+      {
+        auto r = dircos_lab.mutable_unchecked<1>();
+        r(0) = event->getNeutronDircosu(n);
+        r(1) = event->getNeutronDircosv(n);
+        r(2) = event->getNeutronDircosw(n);
+      }
       
       comEn.append( event->getCmNeutronEnergy(n) );
       labEn.append( event->getNeutronEnergy(n) );
       labdc.append( dircos_lab);
       comdc.append( dircos_cm);
-
     }
     
     // gammas HF
@@ -297,7 +300,7 @@ struct EventData {
 
 };
 
-py::object run(const CGMF_Input& input) {
+py::object run(const Input& input) {
 
   // pre-allocate data arrays based on number of events
   auto event_data = EventData(input);
@@ -340,7 +343,7 @@ PYBIND11_MODULE(pyCGMF, m) {
       "runs CGMF histories, returns CGMFtk.Histories object containing event data" 
     );
   
-  py::class_<CGMF_Input>(m, "CGMF_Input")
+  py::class_<Input>(m, "Input")
   .def(
        py::init<int, int, double, double, int, int, std::string >(),
        py::arg("nevents") = 100,
@@ -351,13 +354,13 @@ PYBIND11_MODULE(pyCGMF, m) {
        py::arg("seed") = 13,
        py::arg("omp_fpath") = ""
       )
-  .def_readwrite("nevents", &CGMF_Input::nevents)
-  .def_readwrite("zaid", &CGMF_Input::zaid)
-  .def_readwrite("einc", &CGMF_Input::einc)
-  .def_readwrite("time_coinc_wndw", &CGMF_Input::time_coinc_wndw)
-  .def_readwrite("MPI_rank", &CGMF_Input::MPI_rank)
-  .def_readwrite("seed", &CGMF_Input::seed)
-  .def_readwrite("omp_fpath", &CGMF_Input::omp_fpath);
+  .def_readwrite("nevents", &Input::nevents)
+  .def_readwrite("zaid", &Input::zaid)
+  .def_readwrite("einc", &Input::einc)
+  .def_readwrite("time_coinc_wndw", &Input::time_coinc_wndw)
+  .def_readwrite("MPI_rank", &Input::MPI_rank)
+  .def_readwrite("seed", &Input::seed)
+  .def_readwrite("omp_fpath", &Input::omp_fpath);
 }
 
 #endif
