@@ -143,8 +143,6 @@ struct EventData {
         r(2) = event->getNeutronDircosw(n);
       }
 
-      py::print(dircos_lab);
-      
       comEn.append( event->getCmNeutronEnergy(n) );
       labEn.append( event->getNeutronEnergy(n) );
       labdc.append( dircos_lab);
