@@ -1,3 +1,5 @@
+[![CMake](https://github.com/beykyle/CGMF/actions/workflows/cmake.yml/badge.svg)](https://github.com/beykyle/CGMF/actions/workflows/cmake.yml)
+
 CGMF, Cascading Gamma-ray Multiplicity and Fission
 ==================================================
 
