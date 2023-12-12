@@ -1340,7 +1340,7 @@ class Histories:
     # -- Neutron-Fragment Angles           #
     #################################################################
 
-    def nFangles(self, Eth=None, afterEmission=None, includePrefission=None):
+    def nFangles(self, Eth=None, Emax=None, afterEmission=None, includePrefission=None, return_energy=None):
         """Returns cos(theta) between the neutrons and the fragments
 
         Eth - neutron threshold energy, MeV
@@ -1355,6 +1355,11 @@ class Histories:
             Eth = float(Eth)
         else:
             Eth = 0.0
+
+        if Emax is not None:
+            Emax = float(Emax)
+        else:
+            Emax = np.inf
 
         nE = self.getNeutronElab()
         ncos = self.getLabNeutronDircos()
@@ -1429,12 +1434,19 @@ class Histories:
         FcosHeavy = np.array(FcosHeavy)
         FcosAll = np.array(FcosAll)
 
-        nFcosAll = ncosAll[nEAll >= Eth] * FcosAll[nEAll >= Eth]
+        mask_all = np.logical_and(nEAll >= Eth, nEAll < Emax)
+        mask_Heavy = np.logical_and(nEHeavy >= Eth, nEHeavy < Emax)
+        mask_Light = np.logical_and(nELight >= Eth, nELight < Emax)
+
+        nFcosAll = ncosAll[mask_all] * FcosAll[mask_all]
         nFcosAll = np.sum(nFcosAll, axis=1)
-        nFcosLight = ncosLight[nELight >= Eth] * FcosLight[nELight >= Eth]
+        nFcosLight = ncosLight[mask_Light] * FcosLight[mask_Light]
         nFcosLight = np.sum(nFcosLight, axis=1)
-        nFcosHeavy = ncosHeavy[nEHeavy >= Eth] * FcosHeavy[nEHeavy >= Eth]
+        nFcosHeavy = ncosHeavy[mask_Heavy] * FcosHeavy[mask_Heavy]
         nFcosHeavy = np.sum(nFcosHeavy, axis=1)
+
+        if return_energy:
+            return (nFcosAll, nFcosLight, nFcosHeavy),  (nEAll[mask_all], nELight[mask_Light], nEHeavy[mask_Heavy])
 
         return (nFcosAll, nFcosLight, nFcosHeavy)
 
