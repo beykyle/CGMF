@@ -50,15 +50,17 @@ if(cgmf.installation)
 endif()
 
 FetchContent_Declare(
-  omplib GIT_REPOSITORY git@github.com:beykyle/omplib.git
+  osiris GIT_REPOSITORY git@github.com:beykyle/osiris.git
   GIT_TAG "origin/main"
 )
-message("Fetching beykyle/omplib")
+message("Fetching beykyle/osiris")
+
 FetchContent_Declare(
   json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
 )
 message("Fetching nlohmann/json")
-FetchContent_MakeAvailable(json omplib)
+
+FetchContent_MakeAvailable(json osiris)
 
 
 option(BUILD_PYCGMF "BUILD_PYCGMF" OFF)

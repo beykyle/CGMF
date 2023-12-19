@@ -45,4 +45,4 @@ if(cgmf.installation)
   )
 endif()
 
-target_link_libraries(cgmf PRIVATE nlohmann_json::nlohmann_json omplib)
+target_link_libraries(cgmf PRIVATE nlohmann_json::nlohmann_json osiris_lib)

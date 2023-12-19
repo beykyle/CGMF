@@ -5,7 +5,7 @@ CGMF, Cascading Gamma-ray Multiplicity and Fission
 
 This is a modified version of [lanl/CGMF](https://github.com/lanl/CGMF) for use in uncertainty quantification. The new capabilities include the added options listed below. Includes the following dependencies which are automatically downloaded and integrated by the build system:
 - [nlohmann/json](https://github.com/nlohmann/json) for parsing json formatted parameter files
-- [beykyle/omplib](https://github.com/beykyle/omplib) a library of optical model potentials and solvers
+- [beykyle/osiris](https://github.com/beykyle/osiris) a library of optical model potentials and solvers
 
 The goal of this modification is to provide an easy to use platform for running CGMF with modified internal parameters (e.g. optical model parameter, and more), and analyzing the results. To do this Python bindings are provided to run CGMF, directly populating event-by-event information into a `CGMFtk.Histories` object, without writing to disk or copying large amounts of data in memory.
 

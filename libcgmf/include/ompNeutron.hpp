@@ -10,8 +10,8 @@ using std::string;
 using nlohmann::json;
 
 #include "potential/params.hpp"
-constexpr auto n = omplib::Proj::neutron;
+constexpr auto n = osiris::Proj::neutron;
 
-using OMPFile = omplib::OMParams<n>;
+using OMPFile = osiris::OMParams<n>;
 
 #endif

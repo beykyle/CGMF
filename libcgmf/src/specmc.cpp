@@ -92,17 +92,17 @@ void setPdataOMP(string fname, int ip) {
 
   if ( j.contains("KDHartreeFock_V1_0") ) {
     print_if_rank0("KoningDelaroche03");
-    pdt[neutron].omp_file = new omplib::KD03Params<n>(j);
+    pdt[neutron].omp_file = new osiris::KD03Params<n>(j);
     pdt[neutron].omp = 6 << 8;
   }
   else if ( j.contains("CH89RealCentral_V_0") ) {
     print_if_rank0("ChapelHill89");
-    pdt[neutron].omp_file = new omplib::CH89Params<n>(j);
+    pdt[neutron].omp_file = new osiris::CH89Params<n>(j);
     pdt[neutron].omp = 5 << 8;
   }
   else if ( j.contains("WLHReal_V0_p") ) {
     print_if_rank0("WLH21");
-    pdt[neutron].omp_file = new omplib::WLH21Params<n>(j);
+    pdt[neutron].omp_file = new osiris::WLH21Params<n>(j);
     pdt[neutron].omp = 6 << 8;
   }
   else {
