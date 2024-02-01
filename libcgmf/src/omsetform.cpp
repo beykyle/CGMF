@@ -30,8 +30,8 @@ static double omThomas(double, double, double);
 /*     Spherical Optical Potential Radial Form            */
 /**********************************************************/
 int omPotentialForm(unsigned int potform, int zzprod, Optical *omp, CCdata *cdt,
-                    Potential *pot) {
-  double r, x[6];
+                    Potential *pot, bool emulate) {
+  double r, x[6]; 
   int n;
 
   double eps = log(CRIT_MATCHING);
@@ -70,6 +70,9 @@ int omPotentialForm(unsigned int potform, int zzprod, Optical *omp, CCdata *cdt,
   if (r < pot->rad_match)
     n++;
   pot->rad_match = pot->width * n;
+
+  if (emulate)
+    return 0;
 
   n += 3;
   pot->n_match = n;

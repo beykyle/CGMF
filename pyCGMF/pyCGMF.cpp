@@ -37,6 +37,7 @@ struct Input {
   int MPI_rank             = 0;
   int seed                 = 13;
   std::string omp_fpath    = "";
+  bool emulate             = false;
 };
 
 enum class Fragment : int {
@@ -308,8 +309,7 @@ py::object run(const Input& input) {
   setdatapath(data_path);
   
   // check if opical model param file path has been passes
-  if (not input.omp_fpath.empty())
-    setPdataOMP(input.omp_fpath, input.MPI_rank);
+  setPdataOMP(input.omp_fpath, input.MPI_rank, input.emulate);
   
   // initialize RNG and event
   UniformRNG rng(1);
@@ -350,7 +350,8 @@ PYBIND11_MODULE(pyCGMF, m) {
        py::arg("time_coinc_wndw") = -1,
        py::arg("MPI_rank") = 0,
        py::arg("seed") = 13,
-       py::arg("omp_fpath") = ""
+       py::arg("omp_fpath") = "",
+       py::arg("emulate") = false
       )
   .def_readwrite("nevents", &Input::nevents)
   .def_readwrite("zaid", &Input::zaid)
@@ -359,6 +360,7 @@ PYBIND11_MODULE(pyCGMF, m) {
   .def_readwrite("MPI_rank", &Input::MPI_rank)
   .def_readwrite("seed", &Input::seed)
   .def_readwrite("omp_fpath", &Input::omp_fpath);
+  .def_readwrite("emulate", &Input::emulate);
 }
 
 #endif

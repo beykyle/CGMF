@@ -250,7 +250,7 @@ void omNormalization(int, double, Complex *, Potential *, Wavefunc *);
 /**************************************/
 /*      omsetform.cpp                 */
 /**************************************/
-int omPotentialForm(unsigned int, int, Optical *, CCdata *, Potential *);
+int omPotentialForm(unsigned int, int, Optical *, CCdata *, Potential *, bool emulate=false);
 int omPotentialFixedLength(int, unsigned int, int, Optical *, CCdata *,
                            Potential *);
 double omPotentialRadialCoulomb(double, Optical *);

@@ -114,6 +114,7 @@ public:
   double mass;         /* exact particle mass              */
   double mass_excess;  /* particle mass excess             */
   OMPFile *omp_file;
+  bool emulate;
 
   Pdata() {
     omp = 6 << 8;
@@ -121,6 +122,7 @@ public:
     mass = 0.0;
     mass_excess = 0.0;
     omp_file = nullptr;
+    emulate = false;
   }
 };
 

@@ -109,7 +109,7 @@ void specMCalloc(void);
 void specMCcleanup(void);
 void specMCMain(double, int, double, double, unsigned long, double **);
 void specMCMainFission(fissionEventType *);
-void setPdataOMP(string fname, int ip);
+void setPdataOMP(string fname, int ip, bool emulate=false);
 
 /**************************************/
 /*      specevap.cpp                  */

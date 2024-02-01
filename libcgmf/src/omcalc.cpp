@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -46,9 +47,48 @@ int omCalc(double energy,    // CMS incident energy
   if (proj->particle.getZ() > 0 && energy < ECUT_CHARGED)
     return (-1);
 
+
+  if (proj->emulate) {
+    crx->elastic = crx->reaction = crx->total = 0.0;
+    Complex c, d;
+    int jmax = (int)(2 * proj->spin) + 1;
+    assert(proj->particleID == neutron);
+    for (int j = 0; j < 3 * MAX_L; j++)
+      tran[j] = 0.0;
+
+    zzprod = targ->getZ() * proj->particle.getZ();
+    omSetEnergy(energy, zzprod, mu, &cdt);
+    unsigned int ompindex = omSetOmp(cdt.energy, targ, proj, &omp) & 0x00ff;
+    pot.width = INTEG_WIDTH;
+    omPotentialForm(ompindex, zzprod, &omp, &cdt, &pot, true);
+    
+    // emulation
+
+
+    for (l = 0; l <= cdt.lmax; l++) {
+      for (int j = 0; j < jmax; j++) {
+        double xj = l + proj->spin - (double)j;
+        if (xj < fabs(l - proj->spin))
+          continue;
+        int index = l * 3 + j;
+        auto smat = Complex(0,0);
+        tran[index] = 1.0 - absolute(&smat);
+        if (tran[index] < 0.0)
+          tran[index] = 0.0;
+        
+      }
+      
+      c.real = 1 - smat[l * 3].real;
+      c.imag = smat[l * 3].imag;
+      d.real = 1 - smat[l * 3 + 1].real;
+      d.imag = smat[l * 3 + 1].imag;
+      crx->elastic += (l + 1) * absolute(&c) + l * absolute(&d);
+    }
+    return cdt.lmax;
+  }
+  
   //---------------------------------------
   //      Memory Allocation
-
   try {
     pot.mean_field = new Complex[MAX_POINTS];
     pot.spin_orbit = new Complex[MAX_POINTS];
@@ -103,6 +143,7 @@ int omCalc(double energy,    // CMS incident energy
 
     for (int j = 0; j < jmax; j++) {
       double xj = l + proj->spin - (double)j;
+      
       if (xj < fabs(l - proj->spin))
         continue;
       omInternalFunction(pot.n_match, pot.width, cdt.wavesq, (double)l,

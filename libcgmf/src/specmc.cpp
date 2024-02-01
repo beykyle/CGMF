@@ -75,40 +75,46 @@ void set_time_coincidence_window(double timew) {
 
 double gammaTimeStamp[MAX_NUMBER_GAMMAS];
 
-void setPdataOMP(string fname, int ip) {
-  std::ifstream i(fname);
-  json j;
-  i >> j;
+void setPdataOMP(string fname, int ip, bool emulate) {
+  if (not fname.empty()) {
+    std::ifstream i(fname);
+    json j;
+    i >> j;
 
-  int start = fname.rfind("/");
-  if (start == string::npos) start = 0;
+    int start = fname.rfind("/");
+    if (start == string::npos) start = 0;
 
-  auto print_if_rank0 = [&ip,&fname](string OM_name) {
-    if (ip ==0) {
-      printf("Reading %s parameters from %s\n", OM_name.c_str(), fname.c_str() );
+    auto print_if_rank0 = [&ip,&fname](string OM_name) {
+      if (ip ==0) {
+        printf("Reading %s parameters from %s\n", OM_name.c_str(), fname.c_str() );
+      }
+    };
+
+
+    if ( j.contains("KDHartreeFock_V1_0") ) {
+      print_if_rank0("KoningDelaroche03");
+      pdt[neutron].omp_file = new osiris::KD03Params<n>(j);
+      pdt[neutron].omp = 6 << 8;
     }
-  };
+    else if ( j.contains("CH89RealCentral_V_0") ) {
+      print_if_rank0("ChapelHill89");
+      pdt[neutron].omp_file = new osiris::CH89Params<n>(j);
+      pdt[neutron].omp = 5 << 8;
+    }
+    else if ( j.contains("WLHReal_V0_p") ) {
+      print_if_rank0("WLH21");
+      pdt[neutron].omp_file = new osiris::WLH21Params<n>(j);
+      pdt[neutron].omp = 6 << 8;
+    }
+    else {
+      cgmTerminateCode("Unrecognized OMP file type " + fname);
+    }
+    pdt[gammaray].omp_file = nullptr;
+  }
 
-
-  if ( j.contains("KDHartreeFock_V1_0") ) {
-    print_if_rank0("KoningDelaroche03");
-    pdt[neutron].omp_file = new osiris::KD03Params<n>(j);
-    pdt[neutron].omp = 6 << 8;
+  if (emulate) {
+    pdt[neutron].emulate =true;
   }
-  else if ( j.contains("CH89RealCentral_V_0") ) {
-    print_if_rank0("ChapelHill89");
-    pdt[neutron].omp_file = new osiris::CH89Params<n>(j);
-    pdt[neutron].omp = 5 << 8;
-  }
-  else if ( j.contains("WLHReal_V0_p") ) {
-    print_if_rank0("WLH21");
-    pdt[neutron].omp_file = new osiris::WLH21Params<n>(j);
-    pdt[neutron].omp = 6 << 8;
-  }
-  else {
-    cgmTerminateCode("Unrecognized OMP file type " + fname);
-  }
-  pdt[gammaray].omp_file = nullptr;
 }
 
 /*!
