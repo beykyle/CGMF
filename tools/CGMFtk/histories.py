@@ -542,6 +542,17 @@ class Histories:
 
         return pd.DataFrame.from_dict(dict(zip(columns, data)))
 
+    def getNFCos2(self):
+        """ Get cosine squared of the angle between the neutron and fragment velocities
+        in the lab frame """
+        dirnlab = self.getLabNeutronDircos()
+        dirFlab = np.array(self.getFragmentMomentumPre(), dtype=np.float64)
+        dirFlab /= np.linalg.norm(dirFlab, axis=0)
+        nfcos = []
+        for ndirs, fdir in zip(dirnlab, dirFlab):
+            nfcos.append([np.dot(x, fdir)**2 for x in ndirs])
+        return nfcos
+
     def getParticleEventDataFrame(self):
         """Get a Pandas DataFrame with each emitted particle as a row"""
         df = self.getFragmentEventDataFrame()
