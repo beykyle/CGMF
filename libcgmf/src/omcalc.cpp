@@ -50,11 +50,11 @@ int omCalc(double energy,    // CMS incident energy
 
   if (proj->emulate) {
     crx->elastic = crx->reaction = crx->total = 0.0;
+    cdt.lmax = 10;
     Complex c, d;
     int jmax = (int)(2 * proj->spin) + 1;
     assert(proj->particleID == neutron);
     for (int j = 0; j < 3 * MAX_L; j++)
-      tran[j] = 0.0;
 
     zzprod = targ->getZ() * proj->particle.getZ();
     omSetEnergy(energy, zzprod, mu, &cdt);
@@ -66,23 +66,24 @@ int omCalc(double energy,    // CMS incident energy
 
 
     for (l = 0; l <= cdt.lmax; l++) {
+      Complex smat[jmax];
       for (int j = 0; j < jmax; j++) {
         double xj = l + proj->spin - (double)j;
         if (xj < fabs(l - proj->spin))
           continue;
         int index = l * 3 + j;
-        auto smat = Complex(0,0);
-        tran[index] = 1.0 - absolute(&smat);
+        smat[j] = Complex(0.146729937, 0.03935661271);
+        tran[index] = 1.0 - absolute(&smat[j]);
         if (tran[index] < 0.0)
           tran[index] = 0.0;
-        
       }
       
-      c.real = 1 - smat[l * 3].real;
-      c.imag = smat[l * 3].imag;
-      d.real = 1 - smat[l * 3 + 1].real;
-      d.imag = smat[l * 3 + 1].imag;
+      c.real = 1 - smat[0].real;
+      c.imag = smat[0].imag;
+      d.real = 1 - smat[1].real;
+      d.imag = smat[1].imag;
       crx->elastic += (l + 1) * absolute(&c) + l * absolute(&d);
+      crx->reaction +=  (l + 1) * tran[l * 3] + l * tran[l * 3 + 1];
     }
     return cdt.lmax;
   }

@@ -113,7 +113,7 @@ void setPdataOMP(string fname, int ip, bool emulate) {
   }
 
   if (emulate) {
-    pdt[neutron].emulate =true;
+    pdt[neutron].emulate = true;
   }
 }
 

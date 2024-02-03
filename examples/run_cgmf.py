@@ -5,7 +5,8 @@ import numpy as np
 cgmf_input = Input(
     nevents = 100,
     zaid    = 98252,
-    einc    = 0.0
+    einc    = 0.0,
+    emulate=True,
 )
 
 histories = run(cgmf_input)

@@ -343,7 +343,7 @@ PYBIND11_MODULE(pyCGMF, m) {
   
   py::class_<Input>(m, "Input")
   .def(
-       py::init<int, int, double, double, int, int, std::string >(),
+       py::init<int, int, double, double, int, int, std::string, bool >(),
        py::arg("nevents") = 100,
        py::arg("zaid") = 98252,
        py::arg("einc") = 0.0,
@@ -359,7 +359,7 @@ PYBIND11_MODULE(pyCGMF, m) {
   .def_readwrite("time_coinc_wndw", &Input::time_coinc_wndw)
   .def_readwrite("MPI_rank", &Input::MPI_rank)
   .def_readwrite("seed", &Input::seed)
-  .def_readwrite("omp_fpath", &Input::omp_fpath);
+  .def_readwrite("omp_fpath", &Input::omp_fpath)
   .def_readwrite("emulate", &Input::emulate);
 }
 

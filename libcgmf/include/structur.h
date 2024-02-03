@@ -122,7 +122,7 @@ public:
     mass = 0.0;
     mass_excess = 0.0;
     omp_file = nullptr;
-    emulate = false;
+    emulate = true;
   }
 };
 
